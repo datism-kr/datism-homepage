@@ -616,20 +616,6 @@ h3 {
 /* 사인오프 — 마크(D 관통 화살)와 워드마크를 한 록업으로 묶는다.
    마크 SVG는 viewBox 안쪽 여백이 커서(가로 74% · 세로 74%) gap을 작게 잡아야
    시각 간격이 맞는다. 마크 시각 높이 ≒ 워드마크 캡하이트의 0.9배. */
-.footer-sign {
-  display: flex;
-  align-items: center;
-  gap: 12px;          /* 토큰 외 유추값: 마크 내부 여백을 감안한 시각 간격 */
-  margin-top: 26px;   /* 토큰 외 유추값 */
-  color: var(--ft-text);
-}
-
-.footer-sign-mark {
-  flex: none;
-  display: block;
-  width: 63px;
-  height: 46px;
-}
 
 /* ── 12. 반응형 (720px 브레이크포인트) ───────────── */
 /* 넓은 화면에서는 카피를 두 줄로 — 세 번째 박자만 아래로 내린다 */
@@ -669,8 +655,6 @@ h3 {
 
   /* L컷 최소 높이 28px 규정 — 모바일 사인오프는 여기까지만 내린다 */
   .wordmark-type-lg { height: 33px; }
-  .footer-sign-mark { width: 50px; height: 37px; }
-  .footer-sign { gap: 10px; }
 
   /* 가운뎃점은 항목이 한 줄에 이어질 때만 성립한다 — 줄바꿈이 잦은 폭에서는
      끝에 점이 매달리므로(예 "815호 ·") 아예 한 줄씩 쌓는다. */
@@ -1185,7 +1169,9 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
 .aim-sky svg { width: 100%; height: 100%; display: block; }
 
 .aim-star { fill: var(--nt-soft); }
+/* 겨냥한 별 — 4각 스파클. 좌표는 원점 기준 반지름 1이고 위치·크기는 transform이 정한다. */
 .aim-target { fill: var(--star); }
+.aim-shard { fill: var(--star-soft); }
 /* 조준선 — 별까지 뻗었다가 화살이 떠나면 사라진다 */
 .aim-line {
   stroke: var(--star);
@@ -1194,8 +1180,17 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
   stroke-dasharray: 3 7;
 }
 .aim-arrow { fill: none; stroke: var(--star); stroke-width: 2.5; stroke-linecap: round; }
-.aim-trail { stroke: var(--star-soft); stroke-width: 2; stroke-linecap: round; opacity: 0.55; }
-.aim-fallen { fill: var(--star); }
+
+/* 명중 뒤 암전 — 다음 씬(『탐사대 Z』)이 먹빛이라, 같은 색으로 덮으면 경계가 사라진다.
+   빛무리로 바닥을 밝히던 초판을 대신한다. 하늘과 카피 위를 모두 덮어야 하므로 무대 최상단. */
+.aim-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--sc-bg);
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* 문구 — 별이 내려앉는 자리 바로 위 */
 .aim-copy { position: relative; z-index: 1; text-align: center; }
@@ -1213,20 +1208,28 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
 .aim-line-1 {
   font-family: var(--f-logo);
   font-weight: 700;
-  font-size: clamp(28px, 5vw, 54px);
-  line-height: 1.24;
-  letter-spacing: -0.018em;
+  font-size: clamp(32px, 6.2vw, 74px);
+  line-height: 1.16;
+  letter-spacing: -0.022em;
   color: var(--nt-text);
   margin: 0;
 }
 .aim-line-1 em { font-style: normal; color: var(--star); }
 .aim-sub {
-  margin: 22px auto 0;
+  margin: 26px auto 0;
   max-width: 46ch;
   font-size: 15px;
   line-height: 1.9;
   color: var(--nt-dim);
 }
+.aim-more {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--star);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.aim-more:hover { border-bottom-color: var(--star); }
 
 @media (max-width: 720px) {
   .aim-sub { font-size: 14px; }

@@ -58,7 +58,7 @@ document.documentElement.classList.add('js');
     var pageSky = document.querySelector('#top .aim-sky svg');
     if (pageSky && skyEl) {
       var skyClone = pageSky.cloneNode(true);
-      ['aim-line', 'aim-arrow', 'aim-target', 'aim-trail', 'aim-glow'].forEach(function (id) {
+      ['aim-line', 'aim-arrow', 'aim-target', 'aim-burst'].forEach(function (id) {
         var n = skyClone.querySelector('#' + id);
         if (n) n.parentNode.removeChild(n);
       });
@@ -419,83 +419,103 @@ document.documentElement.classList.add('js');
     branch.style.setProperty('--w', clamp01((p - 0.3) / 0.4).toFixed(3));
   }
 
-  /* ── 씬 0 · 밤하늘 — 겨냥 → 발사 → 별이 떨어진다 ──
+  /* ── 씬 0 · 밤하늘 — 겨냥 → 발사 → 명중 → 파열 → 암전 ──
      로고(활에 화살을 건 D)의 뜻을 그대로 옮긴 자리다. 구간을 겹치지 않게 끊어야
-     "겨누고, 쏘고, 떨어뜨렸다"가 세 동작으로 읽힌다.
-       0.00–0.34 조준선이 별까지 뻗는다
-       0.36–0.56 화살이 선을 타고 날아간다
-       0.54–0.64 맞은 별이 부푼다
-       0.62–0.92 별이 지평선으로 떨어지고 빛무리가 남는다 */
-  /* 좌표를 viewBox에 고정하면 안 된다. 하늘 SVG는 preserveAspectRatio="slice"라
-     세로로 긴 화면에서는 viewBox의 좌우가 잘려 나간다 — 375×812에서는 x 400~800만
-     보이므로 x=872의 별과 화살이 통째로 화면 밖이었다.
-     그래서 매번 "지금 실제로 보이는 viewBox 구간"을 구해 그 안의 비율로 배치한다. */
+     네 동작으로 읽힌다.
+       0.00–0.30 조준선이 별까지 뻗는다
+       0.32–0.52 화살이 선을 타고 날아간다
+       0.50–0.60 스파클이 부풀었다가
+       0.54–0.80 조각으로 터져 흩어진다
+       0.74–1.00 화면이 먹빛으로 잠기며 다음 씬으로 넘어간다
+     별이 바닥으로 떨어져 빛무리를 남기던 초판은 폐기했다 — 웅덩이가 화면을 지저분하게
+     하고, 다음 씬으로 넘어가는 다리 역할은 암전이 더 깨끗하게 한다. */
   var VB_W = 1200, VB_H = 800;
-  var AIM = { x0: 210, y0: 540, x1: 872, y1: 198, xEnd: 600, yEnd: 690 };
+  var AIM = { x0: 210, y0: 540, x1: 872, y1: 198, r: 26 };
+  var aimLine = document.getElementById('aim-line');
+  var aimArrow = document.getElementById('aim-arrow');
+  var aimTarget = document.getElementById('aim-target');
+  var aimBurst = document.getElementById('aim-burst');
+  var aimFade = document.getElementById('aim-fade');
+  var shards = aimBurst ? [].slice.call(aimBurst.children) : [];
+  var aimLen = 0, aimDeg = 0;
 
   function layoutAim() {
     var sky = document.querySelector('#top .aim-sky');
-    if (!sky) return;
+    var kick = document.querySelector('#top .aim-kicker');
+    if (!sky || !kick) return;
     var w = sky.clientWidth, h = sky.clientHeight;
     if (!w || !h) return;
-    var scale = Math.max(w / VB_W, h / VB_H);      /* slice = 덮는 쪽 */
+
+    /* 하늘 SVG는 preserveAspectRatio="slice"라 세로로 긴 화면에서는 viewBox 좌우가
+       잘려 나간다. 지금 실제로 보이는 구간을 구해 그 안에서만 배치한다. */
+    var scale = Math.max(w / VB_W, h / VB_H);
     var visW = w / scale, visH = h / scale;
     var x0 = (VB_W - visW) / 2, y0 = (VB_H - visH) / 2;
-    AIM.x0   = x0 + visW * 0.10;  AIM.y0   = y0 + visH * 0.80;   /* 활을 당기는 자리 */
-    AIM.x1   = x0 + visW * 0.84;  AIM.y1   = y0 + visH * 0.20;   /* 겨냥한 별 */
-    AIM.xEnd = x0 + visW * 0.50;  AIM.yEnd = y0 + visH * 0.94;   /* 별이 닿는 지평선 */
+    var skyRect = sky.getBoundingClientRect();
+
+    /* 별은 카피 바로 위에 서야 한다 — 키커의 화면 좌표를 viewBox 좌표로 되돌린다.
+       (하늘은 별도 좌표계라 이 환산을 거치지 않으면 둘이 같은 세로줄에 못 선다.) */
+    var kr = kick.getBoundingClientRect();
+    var gap = Math.max(38, visH * 0.09);
+    AIM.x1 = x0 + ((kr.left + kr.right) / 2 - skyRect.left) / scale;
+    AIM.y1 = y0 + (kr.top - skyRect.top) / scale - gap;
+    AIM.x0 = x0 + visW * 0.09;
+    AIM.y0 = y0 + visH * 0.86;
+    AIM.r = Math.max(13, visH * 0.028);
+
     aimLen = Math.hypot(AIM.x1 - AIM.x0, AIM.y1 - AIM.y0);
     aimDeg = Math.atan2(AIM.y1 - AIM.y0, AIM.x1 - AIM.x0) * 180 / Math.PI;
-    if (aimGlow) {
-      aimGlow.setAttribute('cx', AIM.xEnd.toFixed(1));
-      aimGlow.setAttribute('cy', AIM.yEnd.toFixed(1));
-      aimGlow.setAttribute('rx', (visW * 0.24).toFixed(1));
-      aimGlow.setAttribute('ry', (visH * 0.10).toFixed(1));
-    }
     if (aimLine) {
       aimLine.setAttribute('x1', AIM.x0.toFixed(1)); aimLine.setAttribute('y1', AIM.y0.toFixed(1));
       aimLine.setAttribute('x2', AIM.x1.toFixed(1)); aimLine.setAttribute('y2', AIM.y1.toFixed(1));
     }
   }
 
-  var aimLine = document.getElementById('aim-line');
-  var aimArrow = document.getElementById('aim-arrow');
-  var aimTarget = document.getElementById('aim-target');
-  var aimTrail = document.getElementById('aim-trail');
-  var aimGlow = document.getElementById('aim-glow');
-  var aimLen = Math.hypot(AIM.x1 - AIM.x0, AIM.y1 - AIM.y0);
-  var aimDeg = Math.atan2(AIM.y1 - AIM.y0, AIM.x1 - AIM.x0) * 180 / Math.PI;
-  layoutAim();
-
   function drawAim(p) {
     if (!aimLine) return;
 
-    var draw = easeOutCubic(clamp01(p / 0.34));
+    var draw = easeOutCubic(clamp01(p / 0.30));
     aimLine.style.strokeDasharray = aimLen;
     aimLine.style.strokeDashoffset = (aimLen * (1 - draw)).toFixed(1);
     /* 화살이 떠난 뒤에도 조준선이 남아 있으면 "아직 겨누는 중"으로 읽힌다 */
-    aimLine.style.opacity = (0.5 * (1 - clamp01((p - 0.44) / 0.14))).toFixed(3);
+    aimLine.style.opacity = (0.5 * (1 - clamp01((p - 0.40) / 0.12))).toFixed(3);
 
-    var fly = clamp01((p - 0.36) / 0.20);
+    var fly = clamp01((p - 0.32) / 0.20);
     var ax = AIM.x0 + (AIM.x1 - AIM.x0) * fly;
     var ay = AIM.y0 + (AIM.y1 - AIM.y0) * fly;
     aimArrow.setAttribute('transform', 'translate(' + ax.toFixed(1) + ',' + ay.toFixed(1) + ') rotate(' + aimDeg.toFixed(1) + ')');
     aimArrow.setAttribute('opacity', (fly > 0 && fly < 1 ? 1 : 0).toString());
 
-    var hit = clamp01((p - 0.54) / 0.10);
-    aimTarget.setAttribute('r', (3 + 5 * Math.sin(hit * Math.PI)).toFixed(2));
+    /* 맞기 직전까지 조용히 커지다가, 맞는 순간 한 번 부풀고 곧 사라진다 */
+    var grow = 0.55 + 0.45 * easeOutCubic(clamp01(p / 0.5));
+    var hit = clamp01((p - 0.50) / 0.10);
+    var gone = clamp01((p - 0.56) / 0.10);
+    var sc = AIM.r * (grow + 1.5 * Math.sin(hit * Math.PI)) * (1 - gone);
+    aimTarget.setAttribute('transform',
+      'translate(' + AIM.x1.toFixed(1) + ',' + AIM.y1.toFixed(1) + ') rotate(' + (p * 90).toFixed(1) + ') scale(' + Math.max(0, sc).toFixed(2) + ')');
+    aimTarget.setAttribute('opacity', (1 - gone).toFixed(3));
 
-    var fall = easeOutCubic(clamp01((p - 0.62) / 0.30));
-    /* 곧게 내려오면 그냥 이동이다 — 가로로 살짝 끌면 포물선처럼 읽힌다 */
-    var fx = AIM.x1 + (AIM.xEnd - AIM.x1) * (fall * fall);
-    var fy = AIM.y1 + (AIM.yEnd - AIM.y1) * fall;
-    aimTarget.setAttribute('cx', fx.toFixed(1));
-    aimTarget.setAttribute('cy', fy.toFixed(1));
-    aimTrail.setAttribute('d', 'M ' + AIM.x1 + ' ' + AIM.y1 + ' Q ' +
-      (AIM.x1 + (fx - AIM.x1) * 0.35).toFixed(1) + ' ' + ((AIM.y1 + fy) / 2).toFixed(1) + ' ' +
-      fx.toFixed(1) + ' ' + fy.toFixed(1));
-    aimTrail.setAttribute('opacity', (0.5 * fall * (1 - fall * 0.55)).toFixed(3));
-    aimGlow.setAttribute('opacity', (0.20 * clamp01((p - 0.72) / 0.24)).toFixed(3));
+    /* 조각은 여덟 갈래로 흩어진다. 밀려나는 거리는 easeOut, 투명도는 뒤늦게 빠져야
+       "터졌다"로 읽힌다 — 둘을 같은 곡선에 묶으면 그냥 사라지는 것처럼 보인다. */
+    var burst = clamp01((p - 0.54) / 0.26);
+    aimBurst.setAttribute('opacity', burst > 0 && burst < 1 ? 1 : 0);
+    if (burst > 0 && burst < 1) {
+      var push = easeOutCubic(burst) * AIM.r * 5.2;
+      var fadeS = 1 - clamp01((burst - 0.35) / 0.65);
+      for (var i = 0; i < shards.length; i++) {
+        var a = (i / shards.length) * Math.PI * 2;
+        var sx = AIM.x1 + Math.cos(a) * push;
+        var sy = AIM.y1 + Math.sin(a) * push;
+        shards[i].setAttribute('transform',
+          'translate(' + sx.toFixed(1) + ',' + sy.toFixed(1) + ') rotate(' + (a * 180 / Math.PI + 90).toFixed(1) +
+          ') scale(' + (AIM.r * 0.5 * fadeS).toFixed(2) + ',' + (AIM.r * (0.9 + burst * 0.8)).toFixed(2) + ')');
+        shards[i].setAttribute('opacity', fadeS.toFixed(3));
+      }
+    }
+
+    /* 암전 — 다음 씬이 먹빛이라 같은 색으로 덮으면 경계가 사라진다. 0.96까지만 —
+       완전히 검게 만들면 마지막 한 프레임이 빈 화면이 된다. */
+    if (aimFade) aimFade.style.opacity = (0.96 * easeOutCubic(clamp01((p - 0.74) / 0.26))).toFixed(3);
   }
 
   /* ── 상단바 면색 — 지금 상단바 밑에 깔린 씬을 따라간다 ──
@@ -522,6 +542,8 @@ document.documentElement.classList.add('js');
     barState = want;
   }
 
+  layoutAim();
+
   var ticking = false;
   function update() {
     ticking = false;
@@ -546,6 +568,11 @@ document.documentElement.classList.add('js');
 
   window.addEventListener('scroll', request, { passive: true });
   window.addEventListener('resize', function () { layoutAim(); request(); });
+  /* 별은 키커 바로 위에 서야 하는데, 그 위치는 글꼴이 들어와야 확정된다.
+     폰트 전후로 두 번 잡는다 — 한 번만 잡으면 대체 글꼴 기준 좌표가 그대로 굳는다. */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { layoutAim(); request(); });
+  }
   /* 배경 탭에서는 rAF가 멈춘다. 그 사이 브라우저가 스크롤 위치를 복원해 두면
      다시 보일 때까지 씬이 옛 진행률에 머문다 — 보일 때 한 번 다시 계산한다. */
   document.addEventListener('visibilitychange', request);
