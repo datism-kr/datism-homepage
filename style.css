@@ -217,8 +217,11 @@ a { color: inherit; }
   gap: 6px;
 }
 
+/* white-space: 메뉴 이름은 어떤 폭에서도 줄바꿈되면 안 된다 — 이름이 "제품·회사·문의"에서
+   "데이티즘 소개·프로덕트·채용"으로 길어지면서 375px에서 글자 단위로 쪼개졌다. */
 .nav a {
   display: inline-block;
+  white-space: nowrap;
   padding: 8px 12px;
   font-size: 14.5px;
   color: var(--dim);
@@ -270,12 +273,6 @@ a { color: inherit; }
 h2 {
   font-size: 28px;   /* 정본 스케일 상한(30px) 이내 */
   margin: 0 0 14px;
-}
-
-.h2-sub {
-  font-size: 22px;
-  color: var(--dim);
-  margin-bottom: 18px;
 }
 
 h3 {
@@ -358,52 +355,26 @@ h3 {
   border-bottom-width: 2px;
 }
 
-/* ── 7. 배지 · 칩 (파스텔은 여기까지만) ──────────── */
-.tz-head {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.tz-head h2 { margin: 0; }
-
+/* ── 7. 배지 ─────────────────────────────────────
+   구 버전은 코랄 면(#ff8a75) 위에 흰 글자였는데 그 조합이 2.3:1로 AA에 못 미친다.
+   면을 버리고 외곽선 배지로 바꾸면 코랄을 잃지 않으면서 대비가 살아난다.
+   (칩 3종은 같은 문제를 안고 있었으나 개편으로 화면에서 사라져 함께 삭제했다.) */
 .badge-dev {
   display: inline-block;
   font-family: var(--f-head);
   font-weight: 800;
   font-size: 12.5px;
   line-height: 1.6;   /* 토큰 외 유추값: 필 배지 내부 행간 */
-  color: #fff;        /* 컬러 면 위 글자는 #fff — 정본 §1-3 */
-  background: var(--coral);
-  padding: 3px 12px;
+  color: var(--coral-ink);   /* 크림 위 5.0:1 */
+  border: 1px solid currentColor;
+  padding: 2px 11px;
   border-radius: 20px;
 }
+
+/* 어두운 씬에서는 잉크 코랄이 2.4:1까지 떨어진다 — 원 코랄이 7.8:1이라 그쪽을 쓴다 */
+.scene-dark .badge-dev { color: var(--coral); }
 
 .badge-sm { font-size: 11.5px; padding: 2px 10px; }
-
-.chips {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 18px 0 0;
-  padding: 0;
-}
-
-.chip {
-  display: inline-block;
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: #fff;
-  padding: 4px 14px;
-  border-radius: 20px;
-}
-
-.chip-coral { background: var(--coral); }
-.chip-sky   { background: var(--sky); }
-.chip-mint  { background: var(--mint); }
 
 /* ── 8. 카드 ─────────────────────────────────────── */
 .card {
@@ -421,30 +392,6 @@ h3 {
   font-size: 14.5px;
   color: var(--dim);
 }
-
-.tz-lead {
-  max-width: 68ch;    /* 토큰 외 유추값: 가독 행폭 */
-  font-size: 15.5px;
-}
-
-.tz-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-top: 26px;
-}
-
-.card-mini { max-width: 460px; }   /* 토큰 외 유추값: 소형 카드 폭(대표작보다 작은 비중) */
-
-.mini-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 6px;
-}
-
-.mini-head h3 { margin: 0; }
 
 /* ── 9. 스펙 표 (점선 구분) ──────────────────────── */
 .spec {
@@ -482,32 +429,7 @@ h3 {
 }
 
 .history-title {
-  margin-top: 26px;   /* 토큰 외 유추값: tz-cards 상단 여백과 동일한 리듬 */
-}
-
-/* ── 9-1. 개발 스크린샷 갤러리 ───────────────────── */
-.shots {
-  margin: 26px 0 0;
-}
-
-.shots-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-
-.shots-grid img {
-  border: 2px solid var(--line);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  background: var(--card);
-  height: auto;
-}
-
-.shots figcaption {
-  margin-top: 10px;   /* 토큰 외 유추값 */
-  font-size: 12.5px;
-  color: var(--dim);
+  margin-top: 26px;   /* 토큰 외 유추값: 섹션 내부 블록 간 리듬 */
 }
 
 /* ── 10. 문의 ────────────────────────────────────── */
@@ -697,7 +619,6 @@ h3 {
 .br-m { display: none; }
 
 @media (max-width: 900px) {
-  .tz-cards { grid-template-columns: 1fr 1fr; }
 
   /* 히어로가 2열을 유지한 채 좁아지는 구간 — 헤드라인을 세 박자 세 줄로 끊는다 */
   .hero h1 { font-size: 34px; }
@@ -721,11 +642,9 @@ h3 {
 
   h2 { font-size: 24px; }
 
-  .tz-cards { grid-template-columns: 1fr; }
 
   .spec { grid-template-columns: 1fr; }
 
-  .shots-grid { gap: 8px; }   /* 세로형 썸네일이라 720px 이하에서도 3열 유지 */
 
   .nav a { padding: 8px 9px; font-size: 14px; }
 
@@ -743,9 +662,15 @@ h3 {
   .footer-corp .row span:not(:last-child)::after { content: none; }
 }
 
+/* 상단바는 워드마크(119px) + 메뉴 세 개가 한 줄에 들어가야 한다. 이름이 길어져
+   460px 아래에서는 14px로는 안 맞는다 — 여기서 한 단계 조인다(실측 330 ≤ 416). */
+@media (max-width: 460px) {
+  .nav { gap: 2px; }
+  .nav a { padding: 8px 6px; font-size: 12.5px; }
+}
+
 @media (max-width: 380px) {
   .wordmark-type { height: 17px; }
-  .nav a { padding: 8px 7px; font-size: 13.5px; }
 }
 
 /* ── 13. 모션 감소 ───────────────────────────────── */
@@ -952,4 +877,213 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
 
 @media (max-width: 720px) {
   .intro-rail { bottom: 12vh; }
+}
+
+/* ── 16. 스크롤 씬 (한 화면 = 한 정보) ─────────────
+   구조: 뷰포트보다 긴 .scene 안에 sticky .scene-stage를 두고, 섹션 안에서의
+   스크롤 진행률(main.js가 --p로 넣는다)이 무대의 연출을 몰아간다.
+
+   기본값은 항상 "다 끝난 상태"다. JS가 없거나 모션 감소면 아래 .js 블록이 매치되지
+   않아 씬은 그냥 평범한 한 화면짜리 섹션이 된다 — 문장은 처음부터 읽히고, 분기는
+   선택 두 개가 나란한 목록으로 읽힌다. 크롤러가 보는 것도 그 상태다. ──────── */
+
+:root {
+  /* 씬 전용 어두운 면. 라이트/다크 어느 쪽에서도 같은 값을 쓴다 —
+     이 화면들은 "괴담 쪽"이라 사이트 테마와 무관하게 어두워야 뜻이 산다.
+     푸터(--ft-*)보다 한 단계 더 내려 앉힌다. */
+  --sc-bg: #16151a;
+  --sc-text: #e7e3db;   /* #16151a 위 12.4:1 */
+  --sc-soft: #c4bfb6;   /* #16151a 위 9.4:1 — 흐려져도 AA가 남아야 하는 글자용 */
+  --sc-dim: #928c82;    /* #16151a 위 5.4:1 — WCAG AA */
+  --sc-line: #3b3844;
+  --sc-mark: #524d5e;   /* 아직 안 풀린 막대 — 첫 화면의 존재감을 만드는 색이라
+                           바탕과 1.6:1까지 붙으면 화면이 비어 보인다 (현 2.9:1) */
+}
+
+.scene { position: relative; }
+
+.scene-stage {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--sect-y) 0;
+  overflow: hidden;
+}
+
+.scene-dark .scene-stage {
+  background: var(--sc-bg);
+  color: var(--sc-text);
+}
+
+.scene-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 780px;   /* 토큰 외 유추값: 한 화면에 하나만 두므로 본문보다 좁게 */
+}
+
+.scene-kicker {
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: var(--sc-dim);
+  margin: 0 0 18px;
+}
+
+.scene-title { font-size: 40px; margin: 0 0 16px; }
+.scene-h3    { font-size: 26px; margin: 0 0 22px; }
+.scene-lead  { font-size: 16.5px; line-height: 1.9; color: var(--sc-text); margin: 0 0 20px; }
+.scene-note  { font-size: 13px; color: var(--sc-dim); margin: 22px 0 0; }
+.scene-hint  { font-size: 11.5px; letter-spacing: .06em; color: var(--sc-dim); margin: 26px 0 0; }
+
+.scene-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0; }
+.scene-meta-t { font-size: 13px; color: var(--sc-dim); }
+
+/* ── 씬 1 · 지워진 기록 ── */
+.redact {
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1.75;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--sc-text);
+}
+
+/* main.js가 어절마다 씌우는 층. .rd-b는 아직 안 풀린 막대, .rd-t는 진짜 글자.
+   기본(JS 없음)에는 이 클래스들이 아예 생기지 않으므로 문단이 그대로 읽힌다. */
+.rd { position: relative; display: inline-block; }
+/* 막대는 자기가 가리는 글자의 잉크 띠에 정확히 얹혀야 한다 — 어긋나면 크로스페이드에서
+   "막대가 곧 그 단어였다"는 착시가 깨진다. 줄상자 1.75em · SUIT 어센트 0.987 · 디센트 0.263
+   → 베이스라인이 위에서 1.237em이고 한글·■의 잉크 높이가 0.82em이므로 띠 윗변은 0.42em이다. */
+.rd-b {
+  position: absolute;
+  left: 0;
+  top: 0.42em;
+  width: 100%;
+  height: 0.82em;
+  background: var(--sc-mark);
+  pointer-events: none;
+}
+
+/* ── 씬 2 · 흐린 플레이 화면 배경 ── */
+.scene-bg { position: absolute; inset: 0; z-index: 0; }
+.scene-bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  /* 흐린 원본이라 확대해도 손해가 없다. 글자가 얹히므로 더 눌러 깐다. */
+  filter: saturate(0.6) brightness(0.6);
+}
+.scene-bg img:first-child { opacity: 1; }   /* JS 없으면 첫 장만 */
+/* 스크림을 균일하게 덮으면 화면이 그냥 어두운 면이 되어 "플레이 화면"으로 안 읽힌다.
+   글자가 놓이는 왼쪽만 진하게 덮고 오른쪽은 열어 둔다.
+   최악(흰 픽셀)에서도 글자 쪽 합성 밝기가 40/255라 --sc-text와 11:1이 남는다. */
+.scene-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, rgba(22,21,26,.94) 0%, rgba(22,21,26,.86) 46%, rgba(22,21,26,.62) 100%);
+}
+
+/* ── 씬 3 · 분기 ── */
+.branch-q {
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--sc-text);
+  margin: 0 0 26px;
+  padding-left: 14px;
+  border-left: 2px solid var(--sc-line);
+}
+
+.branch-list {
+  display: grid;
+  gap: 26px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: br;
+}
+.branch-item { position: relative; padding-top: 15px; border-top: 1px solid var(--sc-line); }
+.branch-choice {
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: 17px;
+  margin: 0 0 8px;
+  color: var(--sc-text);
+}
+.branch-choice::before {
+  counter-increment: br;
+  content: counter(br) " ";
+  color: var(--sc-dim);
+  margin-right: 6px;
+}
+/* 흐려지는 쪽이라 --sc-dim(5.4:1)을 쓰면 옅어졌을 때 2.9:1까지 떨어진다.
+   한 단계 밝은 톤을 쓰고 아래에서 흐림 하한을 0.62로 잡아 어느 쪽이든 AA를 넘긴다. */
+.branch-outcome { font-size: 14.5px; line-height: 1.85; color: var(--sc-soft); margin: 0; }
+
+@media (min-width: 721px) {
+  .branch-list { grid-template-columns: 1fr 1fr; gap: 30px; }
+}
+
+/* ── 일반 섹션도 한 화면을 채운다 ── */
+.section-tall {
+  display: grid;
+  align-content: center;
+  min-height: 78vh;
+}
+.section-meta { margin: 18px 0 0; }
+
+@media (max-width: 720px) {
+  .scene-stage { padding: var(--sect-y-sm) 0; }
+  .scene-title { font-size: 31px; }
+  .scene-h3 { font-size: 21px; }
+  .redact { font-size: 21px; line-height: 1.8; }
+  .section-tall { min-height: 0; }
+}
+
+/* ── 스크롤 연출 — JS + 모션 허용일 때만 ─────────── */
+@media (prefers-reduced-motion: no-preference) {
+  /* 씬을 뷰포트보다 길게 늘려야 sticky 무대가 그 구간 내내 붙어 있는다.
+     --len은 각 섹션이 인라인으로 정한다(화면 수). */
+  .js .scene { height: calc(var(--len, 2) * 100vh); }
+  .js .scene-stage { position: sticky; top: 0; height: 100vh; min-height: 100vh; }
+
+  /* 씬 1 — 막대가 흩어진 상태에서 시작해 제자리로 모이고, 그다음 글자로 풀린다.
+     좌표·투명도는 main.js가 어절마다 직접 넣는다(어절 수가 가변이라 CSS로는 못 짠다). */
+  .js .redact .rd-t { opacity: 0; }
+
+  /* 씬 2 — 배경 세 장은 진행률로 교차한다. 값을 프레임마다 직접 넣으므로
+     transition을 걸면 매 프레임 목표가 바뀌어 오히려 늘어진다 — 걸지 않는다. */
+
+  /* 씬 3 — 두 갈래를 감추지 않고 무게만 옮긴다. --w는 main.js가 0→1로 넣는다.
+     휠은 값이 뚝뚝 끊겨 들어오므로 짧은 transition으로만 이어 붙인다. */
+  .js .branch-item { transition: opacity 0.18s linear, transform 0.18s ease-out; }
+  /* 흐림 하한 0.66 — 0.62면 고르지 않은 쪽 결과문이 4.51:1로 AA 경계에 걸린다(현 5.0:1).
+     무게 차이는 밝기만이 아니라 위쪽 선의 길이와 미세한 이동이 함께 만든다. */
+  .js .branch-item:nth-child(1) {
+    opacity: calc(1 - 0.34 * var(--w, 0));
+    transform: translateY(calc(var(--w, 0) * 4px));
+  }
+  .js .branch-item:nth-child(2) {
+    opacity: calc(0.66 + 0.34 * var(--w, 0));
+    transform: translateY(calc((1 - var(--w, 0)) * 4px));
+  }
+  .js .branch-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -1px;
+    height: 1px;
+    background: var(--sc-text);
+    transition: width 0.18s ease-out;
+  }
+  .js .branch-item:nth-child(1)::after { width: calc((1 - var(--w, 0)) * 100%); }
+  .js .branch-item:nth-child(2)::after { width: calc(var(--w, 0) * 100%); }
 }

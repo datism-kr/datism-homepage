@@ -226,14 +226,9 @@ document.documentElement.classList.add('js');
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) return;
 
-  var revealTargets = document.querySelectorAll(
-    '.tz-cards .card, .shots-grid img, .card-mini, .spec, .contact-card'
-  );
-
-  [document.querySelectorAll('.tz-cards .card'), document.querySelectorAll('.shots-grid img')]
-    .forEach(function (group) {
-      group.forEach(function (el, i) { el.style.transitionDelay = (i * 70) + 'ms'; });
-    });
+  /* 씬 안쪽에는 리빌을 걸지 않는다 — 스크롤 진행률이 이미 연출을 몰고 있어 서로 겹친다.
+     남는 건 크림 면의 일반 섹션(연혁·지원 카드)뿐이다. */
+  var revealTargets = document.querySelectorAll('.spec, .contact-card');
 
   revealTargets.forEach(function (el) { el.classList.add('reveal'); });
 
@@ -296,4 +291,124 @@ document.documentElement.classList.add('js');
       if (!ticking) { ticking = true; requestAnimationFrame(update); }
     }, { passive: true });
   }
+})();
+
+/* ============================================================
+   3) 스크롤 씬 엔진 — 한 화면 = 한 정보
+
+   .scene은 뷰포트보다 길고, 그 안의 .scene-stage가 sticky로 붙어 있는다.
+   섹션 안에서의 진행률 p(0→1)를 --p로 흘려 넣고, 씬별 연출을 그 위에 얹는다.
+
+   시작 상태를 만드는 건 전부 이 파일이다. CSS 기본값은 "끝난 상태"라서,
+   여기가 안 돌면 씬은 그냥 읽히는 섹션이 된다(크롤러·모션 감소·JS 미작동).
+   ============================================================ */
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var scenes = [].slice.call(document.querySelectorAll('.scene'));
+  if (!scenes.length) return;
+
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  /* ── 씬 1 · 지워진 기록 ────────────────────────────
+     문단을 어절로 쪼개 각 어절에 막대(.rd-b)를 덧씌운다. 원문은 그대로 남으므로
+     검색엔진·스크린리더가 보는 문장은 바뀌지 않는다.
+     흩어지는 좌표는 난수가 아니라 황금각으로 뽑는다 — 새로고침마다 배치가 달라지면
+     같은 페이지가 매번 다른 물건처럼 보인다. */
+  var redactWords = [];
+  (function buildRedact() {
+    var p = document.getElementById('redact');
+    if (!p) return;
+    var words = p.textContent.trim().split(/\s+/);
+    p.textContent = '';
+    words.forEach(function (w, i) {
+      var span = document.createElement('span');
+      span.className = 'rd';
+      var txt = document.createElement('span');
+      txt.className = 'rd-t';
+      txt.textContent = w;
+      var bar = document.createElement('i');
+      bar.className = 'rd-b';
+      bar.setAttribute('aria-hidden', 'true');
+      span.appendChild(txt);
+      span.appendChild(bar);
+      p.appendChild(span);
+      if (i < words.length - 1) p.appendChild(document.createTextNode(' '));
+
+      var a = i * 2.399963;                       // 황금각 — 고르게 흩어진다
+      redactWords.push({
+        el: span, bar: bar, txt: txt,
+        dx: Math.cos(a) * (36 + (i * 37) % 78),
+        dy: Math.sin(a) * (26 + (i * 53) % 62),
+        rot: ((i % 7) - 3) * 3.2,
+        lag: (i % 11) / 11 * 0.26                 // 어절마다 조금씩 늦게 도착
+      });
+    });
+  })();
+
+  function drawRedact(p) {
+    for (var i = 0; i < redactWords.length; i++) {
+      var w = redactWords[i];
+      var gather = easeOutCubic(clamp01((p - w.lag) / 0.42));
+      var back = 1 - gather;
+      w.el.style.transform = 'translate(' + (w.dx * back).toFixed(2) + 'px,' +
+        (w.dy * back).toFixed(2) + 'px) rotate(' + (w.rot * back).toFixed(2) + 'deg)';
+      /* 자리를 다 잡은 뒤에야 글자가 나온다 — 겹치면 둘 다 안 읽힌다.
+         어절 i의 모임은 lag+0.42에 끝나고 풀림은 0.56+lag*0.55에 시작하므로, lag가 가장 큰
+         어절(0.236)까지도 모임이 먼저 끝난다. 풀림은 늦어도 p=0.97에 완료된다. */
+      var solve = clamp01((p - 0.56 - w.lag * 0.55) / 0.28);
+      w.bar.style.opacity = (1 - solve).toFixed(3);
+      w.txt.style.opacity = solve.toFixed(3);
+    }
+  }
+
+  /* ── 씬 2 · 흐린 플레이 화면 3장 교차 ── */
+  var bgImgs = [].slice.call(document.querySelectorAll('#tamsadae-z .scene-bg img'));
+  function drawShots(p) {
+    if (!bgImgs.length) return;
+    var n = bgImgs.length;
+    var pos = clamp01(p) * (n - 1);          // 0 → n-1
+    for (var i = 0; i < n; i++) {
+      var d = Math.abs(pos - i);
+      bgImgs[i].style.opacity = (d >= 1 ? 0 : 1 - d).toFixed(3);
+    }
+  }
+
+  /* ── 씬 3 · 분기 무게 이동 ──
+     0.3~0.7 구간에서만 옮긴다. 씬 진입·이탈에서 이미 움직이고 있으면
+     "내가 옮기고 있다"는 느낌이 사라진다. */
+  var branch = document.getElementById('branch');
+  function drawBranch(p) {
+    if (!branch) return;
+    branch.style.setProperty('--w', clamp01((p - 0.3) / 0.4).toFixed(3));
+  }
+
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var vh = window.innerHeight;
+    for (var i = 0; i < scenes.length; i++) {
+      var s = scenes[i];
+      var r = s.getBoundingClientRect();
+      if (r.bottom < -vh || r.top > vh * 2) continue;   // 화면 근처가 아니면 건너뛴다
+      var span = s.offsetHeight - vh;
+      var p = span > 0 ? clamp01(-r.top / span) : (r.top < 0 ? 1 : 0);
+      s.style.setProperty('--p', p.toFixed(4));
+      if (s.id === 'record') drawRedact(p);
+      else if (s.id === 'tamsadae-z') drawShots(p);
+      else if (s.id === 'branch') drawBranch(p);
+    }
+  }
+  function request() {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }
+
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  /* 배경 탭에서는 rAF가 멈춘다. 그 사이 브라우저가 스크롤 위치를 복원해 두면
+     다시 보일 때까지 씬이 옛 진행률에 머문다 — 보일 때 한 번 다시 계산한다. */
+  document.addEventListener('visibilitychange', request);
+  window.addEventListener('load', request);
+  update();
 })();
