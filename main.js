@@ -552,3 +552,69 @@ document.documentElement.classList.add('js');
   window.addEventListener('load', request);
   update();
 })();
+
+/* ============================================================
+   4) 탭으로 다음 화면 — 터치 기기 전용
+
+   씬 하나를 통과하려면 손가락을 여러 번 밀어야 한다. 빈 곳을 탭하면 다음 정지점으로
+   미끄러지게 한다. html의 scroll-behavior:smooth를 타므로, 이동하는 동안 그 씬의
+   연출이 빠르게 재생된다 — 건너뛰는 게 아니라 빨리 감는 것이다.
+
+   'click'을 쓰는 게 핵심이다. 스크롤 제스처는 click을 만들지 않으므로,
+   밀어서 넘기는 동작과 탭이 저절로 구분된다(touchstart로 잡으면 둘이 섞인다).
+   ============================================================ */
+(function () {
+  /* ?tap=1 — 마우스 환경에서도 켜서 검수한다(터치 판정을 흉내 낼 수단이 없다) */
+  var force = /[?&]tap\b/.test(location.search);
+  if (!force && !window.matchMedia('(pointer: coarse)').matches) return;
+  if (force) document.documentElement.classList.add('tap-on');
+
+  var main = document.getElementById('main');
+  if (!main) return;
+  var bar = document.querySelector('.topbar');
+  var hint = document.getElementById('tap-hint');
+
+  /* 정지점: 각 섹션의 머리. 씬은 여기에 "연출이 끝나는 지점"을 하나 더 갖는다 —
+     그래야 첫 탭이 그 씬을 재생하고, 두 번째 탭이 다음 씬으로 넘어간다. */
+  function stops() {
+    var vh = window.innerHeight;
+    var barH = bar ? bar.offsetHeight : 0;
+    var list = [];
+    var secs = main.children;
+    for (var i = 0; i < secs.length; i++) {
+      var s = secs[i];
+      if (s.tagName !== 'SECTION') continue;
+      var top = s.getBoundingClientRect().top + window.scrollY;
+      list.push(Math.max(0, Math.round(top - barH)));
+      if (s.classList.contains('scene')) {
+        var span = s.offsetHeight - vh;
+        if (span > 40) list.push(Math.round(top + span));
+      }
+    }
+    var foot = document.querySelector('.footer');
+    if (foot) list.push(Math.round(foot.getBoundingClientRect().top + window.scrollY - barH));
+    list.sort(function (a, b) { return a - b; });
+    return list;
+  }
+
+  var lock = 0;
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    /* 링크·버튼·입력은 원래 하던 일을 한다. 인트로는 자기 건너뛰기가 따로 있다. */
+    if (t.closest('a, button, input, textarea, select, label, [role="button"], .intro')) return;
+    /* 글을 긁어 읽는 중이면 화면을 옮기지 않는다 */
+    if (window.getSelection && String(window.getSelection()).length > 0) return;
+    if (e.timeStamp - lock < 450) return;    /* 연타·더블탭 확대가 두 칸 넘기지 않게 */
+
+    var y = window.scrollY, list = stops(), next = null;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] > y + 12) { next = list[i]; break; }
+    }
+    if (next === null) return;               /* 끝에 닿았으면 아무 일도 하지 않는다 */
+
+    lock = e.timeStamp;
+    window.scrollTo({ top: next, behavior: 'smooth' });
+    if (hint) hint.classList.add('is-gone');
+  });
+})();

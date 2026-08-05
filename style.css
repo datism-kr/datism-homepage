@@ -1121,6 +1121,12 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
      --len은 각 섹션이 인라인으로 정한다(화면 수). */
   .js .scene { height: calc(var(--len, 2) * 100vh); }
   .js .scene-stage { position: sticky; top: 0; height: 100vh; min-height: 100vh; }
+  /* 모바일에서 100vh는 주소창이 펼쳐진 큰 높이라, 접혔다 펴질 때마다 무대가 출렁인다.
+     svh(작은 뷰포트)로 잡으면 흔들리지 않는다. 지원 안 하는 브라우저는 위 vh로 남는다. */
+  @supports (height: 100svh) {
+    .js .scene { height: calc(var(--len, 2) * 100svh); }
+    .js .scene-stage { height: 100svh; min-height: 100svh; }
+  }
 
   /* 씬 1 — 막대가 흩어진 상태에서 시작해 제자리로 모이고, 그다음 글자로 풀린다.
      좌표·투명도는 main.js가 어절마다 직접 넣는다(어절 수가 가변이라 CSS로는 못 짠다). */
@@ -1325,3 +1331,32 @@ html.bar-dark .nav a:hover { color: var(--sc-text); border-color: var(--sc-line)
 /* 포커스 링도 어두운 면에서 살아 있어야 한다 — 스카이(#79b8e8)는 인디고 위에서 묻힌다 */
 html.bar-night :focus-visible,
 html.bar-dark :focus-visible { outline-color: var(--star); }
+
+/* ── 21. 탭으로 다음 화면 (터치 기기) ───────────────
+   스크롤로 한 씬을 통과하려면 손가락을 여러 번 밀어야 한다. 터치 기기에서는
+   빈 곳을 탭하면 다음 정지점으로 미끄러지게 한다(main.js).
+   안내는 첫 화면에만, 한 번 쓰고 나면 사라진다 — 계속 떠 있으면 잔소리가 된다. */
+.tap-hint { display: none; }
+
+/* .tap-on은 ?tap=1 검수용 강제 표시 — 실사용 조건은 아래 @media다 */
+.js.tap-on .tap-hint {
+  display: block;
+  margin: 30px 0 0;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--nt-dim);
+  transition: opacity 0.3s ease-out;
+}
+.js.tap-on .tap-hint.is-gone { opacity: 0; }
+
+@media (pointer: coarse) {
+  .js .tap-hint {
+    display: block;
+    margin: 30px 0 0;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: var(--nt-dim);
+    transition: opacity 0.3s ease-out;
+  }
+  .js .tap-hint.is-gone { opacity: 0; }
+}
