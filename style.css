@@ -17,12 +17,26 @@
   src: url('assets/fonts/SUIT-ExtraBold.woff2') format('woff2');
 }
 
+/* 로고 서체: Space Grotesk 가변(300~700, 라틴 서브셋 22KB).
+   워드마크 SVG가 바로 이 글자꼴의 아웃라인이므로, 인트로·태그라인의 라틴 글자를 이걸로
+   조판해야 로고와 한 벌로 읽힌다. 22KB뿐이라 CDN에 맡길 이유가 없다.
+   OFL 원문은 assets/fonts/SpaceGrotesk-OFL.txt — 파일을 배포하므로 동봉 의무가 있다. */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('assets/fonts/SpaceGrotesk-Variable.woff2') format('woff2');
+}
+
 /* ── 1. 토큰 ─────────────────────────────────────── */
 :root {
   /* 본문 Pretendard는 92개 unicode-range 서브셋이라 CDN에서 필요한 조각만 받는다
      — 자체 호스팅하면 그 장점이 사라지므로 여기만 jsDelivr를 쓴다. */
   --f-head: 'SUIT', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
   --f-body: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  /* 라틴 전용 — 로고와 같은 글자꼴. 한글이 섞이면 --f-head로 흘러가게 뒤에 붙여 둔다. */
+  --f-logo: 'Space Grotesk', 'SUIT', 'Pretendard Variable', Pretendard, sans-serif;
 
   --bg: #faf7f0;      /* 웜 화이트 바탕 */
   --card: #ffffff;    /* 카드·버튼 면 */
@@ -264,8 +278,11 @@ a { color: inherit; }
 }
 
 /* 히어로 아이브로우는 영문 태그라인(Analyze, Build, Craft.) 자리 —
-   섹션 키커와 달리 브랜드 서명이므로 코랄을 유지하고 한 단계 키운다. */
+   섹션 키커와 달리 브랜드 서명이므로 코랄을 유지하고 한 단계 키운다.
+   라틴이므로 로고 서체로 조판한다(인트로·밤하늘 키커와 같은 글자꼴). */
 .eyebrow {
+  font-family: var(--f-logo);
+  font-weight: 700;
   font-size: 13.5px;
   letter-spacing: 0.1em;
 }
@@ -724,15 +741,37 @@ h3 {
 
 .intro { display: none; }
 
+/* 인트로는 첫 화면(#top 밤하늘)으로 인계되므로 처음부터 같은 하늘이어야 한다.
+   깊은 밤(--nt-deep)으로 시작해 별이 뜨면서 인디고로 밝아지고, 그대로 페이지에 넘긴다. */
 html.intro-on .intro {
   display: grid;
   position: fixed;
   inset: 0;
   z-index: 60;                 /* 상단바(10)보다 위 */
   place-items: center;
-  background: var(--bg);
+  color: var(--nt-text);
+  background:
+    radial-gradient(120% 90% at 50% 108%, var(--nt-rise) 0%, transparent 62%),
+    linear-gradient(180deg, var(--nt-deep) 0%, var(--nt-bg) 55%, var(--nt-bg) 100%);
   transition: opacity 0.34s ease-out;
 }
+
+/* 밝아지기 전의 어둠. main.js가 첫 두 비트에 걸쳐 걷어낸다. */
+.intro-veil {
+  position: absolute;
+  inset: 0;
+  background: var(--nt-deep);
+  pointer-events: none;
+}
+/* 별밭은 #top의 하늘을 그대로 복제해 쓴다 — 같은 자리에 같은 별이라야 인계가 이어진다 */
+.intro-sky {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.intro-sky svg { width: 100%; height: 100%; display: block; }
 html.intro-on body { overflow: hidden; }
 
 /* 안전망 — main.js가 못 뜨면 오버레이가 영구히 남는다. 6초 뒤 강제 해제.
@@ -746,6 +785,10 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
   place-items: center;
   width: 100%;
   padding: 0 var(--pad-x);
+  /* 베일·하늘은 position:absolute라 그냥 두면 정적 그리드 아이템인 무대보다 위에 칠해진다.
+     글자가 베일 밑으로 들어가 뿌옇게 보였다 — 무대를 명시적으로 올린다. */
+  position: relative;
+  z-index: 1;
 }
 
 /* ── 비트 (A/B/C/D + 뒤따르는 글자) ── */
@@ -756,12 +799,17 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
      아니라 박스 아래변이 베이스라인으로 합성돼 두 조각이 어긋난다. 같은 줄상자에 맡긴다. */
   align-items: flex-start;
   justify-content: center;     /* 단어가 자라면 행이 스스로 재정렬 → 머리글자가 왼쪽으로 미끄러진다 */
-  font-family: var(--f-head);
-  font-weight: 800;
+  /* 워드마크와 같은 글자꼴·같은 굵기다. 마지막 비트에서 이 글자들이 그대로 로고가 되므로
+     여기서 서체가 갈리면 "D가 로고가 된다"는 연결이 끊긴다. 700은 S컷(볼드)에 맞춘 값. */
+  font-family: var(--f-logo);
+  font-weight: 700;
   font-size: clamp(56px, 13.5vw, 152px);
   line-height: 1.28;           /* 1이면 .intro-rest의 overflow:hidden이 y·g 디센더를 자른다 */
-  letter-spacing: -0.045em;
-  color: var(--text);
+  /* -0.024em은 눈대중이 아니다. wordmark_S의 글자부는 캡하이트 70에서 폭 342.4인데
+     Space Grotesk 700 기본 자간으로는 357이 나온다 — 그 차이를 글자 수로 나눈 값이다.
+     즉 로고에 이미 박혀 있는 자간을 그대로 재현한 값이다. */
+  letter-spacing: -0.024em;
+  color: var(--nt-text);
   white-space: nowrap;
 }
 
@@ -785,19 +833,20 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
   opacity: 0;
   flex: none;
   align-self: center;
-  color: var(--text);
+  color: var(--nt-text);
 }
-/* 높이 0.98em — 마크 내용이 박스의 74.1%(94.1/127)이므로 실제 그림 높이가 0.726em이 되어
-   SUIT ExtraBold의 캡하이트(0.735em)와 거의 같아진다.
-   top -0.043em — 마크 SVG는 내용이 박스 아래쪽에 치우쳐 있다(위 여백 17.3% · 아래 8.6%).
-   align-self:center는 박스를 맞추므로 그림은 그 차이의 절반만큼 낮게 보인다. 그만큼 올린다.
+/* 높이 0.945em — 마크 내용이 박스의 74.1%(94.1/127)이므로 실제 그림이 0.700em이 되어
+   Space Grotesk의 캡하이트(0.700em, 실측)와 정확히 같아진다.
+   (SUIT ExtraBold 시절 값은 0.98em이었다 — 글자꼴을 바꾸면 이 값도 같이 바뀐다.)
+   top -0.041em — 마크 SVG는 내용이 박스 아래쪽에 치우쳐 있다(위 여백 17.3% · 아래 8.6%).
+   align-self:center는 박스를 맞추므로 그림은 그 차이의 절반(0.0437×높이)만큼 낮게 보인다.
    (상단바·푸터 록업은 마크가 작아 이 편차가 2~3px이라 보정하지 않는다 — 셋의 규격을 맞춘다.) */
 .intro-mark svg {
   display: block;
-  height: 0.98em;
+  height: 0.945em;
   width: auto;
   position: relative;
-  top: -0.043em;
+  top: -0.0413em;
 }
 
 /* ── 최종 록업 ── */
@@ -812,12 +861,12 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
 }
 
 .intro-tag {
-  font-family: var(--f-head);
-  font-weight: 800;
+  font-family: var(--f-logo);
+  font-weight: 700;
   font-size: clamp(19px, 4.2vw, 38px);
   line-height: 1.2;
-  letter-spacing: -0.035em;
-  color: var(--dim);
+  letter-spacing: -0.02em;
+  color: var(--nt-dim);
   white-space: nowrap;
 }
 .intro-tag span { display: inline-block; opacity: 0; }
@@ -827,7 +876,7 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
   display: flex;
   align-items: center;
   gap: 14px;
-  color: var(--text);
+  color: var(--nt-text);
   transform-origin: 50% 50%;
 }
 /* margin-left는 시각 중심 보정이다. 마크 SVG는 왼쪽 여백(18%)이 오른쪽(8%)보다 넓어서
@@ -835,7 +884,9 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
    행 전체가 그 절반만큼 왼쪽으로 이동해 눈에 보이는 중심이 화면 중심과 맞는다.
    (푸터 록업은 좌측 정렬이라 이 편차가 드러나지 않는다 — 그래서 거기엔 넣지 않는다.) */
 .intro-lockup svg { display: block; flex: none; width: 4.72em; height: 3.44em; margin-left: -0.846em; }
-.intro-lockup .wordmark-type-lg { height: 3.07em; }
+/* L컷이 아니라 S컷(볼드)이다 — 인트로 글자가 Space Grotesk 700이고 인계 대상인 상단바도
+   S컷이라, 셋을 같은 컷으로 맞춰야 마지막 순간에 굵기가 튀지 않는다. L컷은 푸터 전담. */
+.intro-lockup .wordmark-type { height: 3.07em; }
 .intro-lockup { font-size: clamp(14px, 2.7vw, 21px); }   /* em 기준 — 위 세 값이 여기에 물린다 */
 
 /* ── 진행 레일 — 4비트가 남았다는 계약을 조용히 보여준다 ── */
@@ -846,14 +897,14 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
   transform: translateX(-50%);
   width: 84px;
   height: 1px;
-  background: var(--line);
+  background: var(--nt-line);
   overflow: hidden;
 }
 .intro-rail i {
   display: block;
   height: 100%;
   width: 100%;
-  background: var(--dim);
+  background: var(--star);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 0.42s cubic-bezier(0.22, 0.7, 0.2, 1);
@@ -865,15 +916,17 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
   bottom: 16px;
   padding: 7px 13px;
   font: inherit;
+  font-family: var(--f-logo);
+  font-weight: 500;
   font-size: 11px;
   letter-spacing: 0.12em;
-  color: var(--dim);
+  color: var(--nt-dim);
   background: none;
-  border: 1px solid var(--line);
+  border: 1px solid var(--nt-line);
   border-radius: 11px;
   cursor: pointer;
 }
-.intro-skip:hover { color: var(--text); }
+.intro-skip:hover { color: var(--nt-text); }
 
 @media (max-width: 720px) {
   .intro-rail { bottom: 12vh; }
@@ -1141,8 +1194,8 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
 /* 문구 — 별이 내려앉는 자리 바로 위 */
 .aim-copy { position: relative; z-index: 1; text-align: center; }
 .aim-kicker {
-  font-family: var(--f-head);
-  font-weight: 800;
+  font-family: var(--f-logo);
+  font-weight: 700;
   font-size: 12.5px;
   letter-spacing: 0.16em;
   color: var(--star);

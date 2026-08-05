@@ -49,6 +49,22 @@ document.documentElement.classList.add('js');
     var skipEl = document.getElementById('intro-skip');
     var topWordmark = document.querySelector('.topbar .wordmark');
     var topMark = document.querySelector('.wordmark-mark');
+    var veilEl = document.getElementById('intro-veil');
+    var skyEl = document.getElementById('intro-sky');
+
+    /* 별밭은 첫 화면(#top)의 하늘을 그대로 복제한다 — 같은 자리에 같은 별이라야
+       오버레이가 걷히는 순간에 하늘이 이어진 것처럼 보인다.
+       스크롤로 움직이는 조준선·화살·별은 여기 있으면 안 되므로 떼어낸다. */
+    var pageSky = document.querySelector('#top .aim-sky svg');
+    if (pageSky && skyEl) {
+      var skyClone = pageSky.cloneNode(true);
+      ['aim-line', 'aim-arrow', 'aim-target', 'aim-trail', 'aim-glow'].forEach(function (id) {
+        var n = skyClone.querySelector('#' + id);
+        if (n) n.parentNode.removeChild(n);
+      });
+      skyClone.removeAttribute('id');
+      skyEl.appendChild(skyClone);
+    }
 
     /* 마크 SVG는 상단바 것을 복제해 쓴다 — 같은 path를 파일에 세 번 적지 않기 위해 */
     if (topMark) {
@@ -108,6 +124,20 @@ document.documentElement.classList.add('js');
 
     function start() {
       if (done) return;
+
+      /* 깊은 밤 → 별이 뜨며 인디고로. 첫 두 비트에 걸쳐 끝내야 "Datism"이 나올 때쯤
+         하늘이 다 차 있고, 그 상태 그대로 페이지의 밤하늘로 넘어간다. */
+      at(60, function () {
+        if (veilEl) {
+          veilEl.style.transition = 'opacity ' + (T.beat * 2) + 'ms ease-out';
+          veilEl.style.opacity = '0';
+        }
+        if (skyEl) {
+          skyEl.style.transition = 'opacity ' + (T.beat * 2.4) + 'ms ease-in';
+          skyEl.style.opacity = '1';
+        }
+      });
+
       BEATS.forEach(function (b, i) {
         var t0 = i * T.beat;
         if (i > 0) at(t0 - T.exitAt, function () { retreat(); });
