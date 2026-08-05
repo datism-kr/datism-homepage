@@ -435,7 +435,6 @@ document.documentElement.classList.add('js');
   var aimArrow = document.getElementById('aim-arrow');
   var aimTarget = document.getElementById('aim-target');
   var aimBurst = document.getElementById('aim-burst');
-  var aimFade = document.getElementById('aim-fade');
   var shards = aimBurst ? [].slice.call(aimBurst.children) : [];
   var aimLen = 0, aimDeg = 0;
 
@@ -474,48 +473,64 @@ document.documentElement.classList.add('js');
   function drawAim(p) {
     if (!aimLine) return;
 
-    var draw = easeOutCubic(clamp01(p / 0.30));
+    /* 구간 배치
+         0.00–0.24  조준선이 별까지 뻗는다
+         0.24–0.40  화살을 걸고 뒤로 당긴다 (느리게 — 여기서 힘이 쌓인다)
+         0.40–0.475 발사. 당김의 1/2 시간에 열 배의 거리를 간다 — 이 대비가 "팍"이다
+         0.465–0.53 명중해 스파클이 부풀었다 꺼진다
+         0.50–0.86  여덟 조각으로 파열 (길게 — 스크롤로 지나가도 보이게)
+         0.78–1.00  먹빛으로 잠기며 다음 씬으로 */
+    var ux = (AIM.x1 - AIM.x0) / (aimLen || 1);
+    var uy = (AIM.y1 - AIM.y0) / (aimLen || 1);
+
+    var draw = easeOutCubic(clamp01(p / 0.24));
     aimLine.style.strokeDasharray = aimLen;
     aimLine.style.strokeDashoffset = (aimLen * (1 - draw)).toFixed(1);
-    /* 화살이 떠난 뒤에도 조준선이 남아 있으면 "아직 겨누는 중"으로 읽힌다 */
-    aimLine.style.opacity = (0.5 * (1 - clamp01((p - 0.40) / 0.12))).toFixed(3);
 
-    var fly = clamp01((p - 0.32) / 0.20);
-    var ax = AIM.x0 + (AIM.x1 - AIM.x0) * fly;
-    var ay = AIM.y0 + (AIM.y1 - AIM.y0) * fly;
-    aimArrow.setAttribute('transform', 'translate(' + ax.toFixed(1) + ',' + ay.toFixed(1) + ') rotate(' + aimDeg.toFixed(1) + ')');
-    aimArrow.setAttribute('opacity', (fly > 0 && fly < 1 ? 1 : 0).toString());
+    var nock = clamp01((p - 0.24) / 0.16);
+    var release = clamp01((p - 0.40) / 0.075);
 
-    /* 맞기 직전까지 조용히 커지다가, 맞는 순간 한 번 부풀고 곧 사라진다 */
-    var grow = 0.55 + 0.45 * easeOutCubic(clamp01(p / 0.5));
-    var hit = clamp01((p - 0.50) / 0.10);
-    var gone = clamp01((p - 0.56) / 0.10);
-    var sc = AIM.r * (grow + 1.5 * Math.sin(hit * Math.PI)) * (1 - gone);
+    /* 당기는 동안 조준선이 팽팽해졌다가(진해짐) 화살이 떠나면 툭 끊긴다 */
+    var tension = 0.5 + 0.34 * nock * (1 - release);
+    aimLine.style.opacity = (tension * (1 - clamp01((p - 0.44) / 0.10))).toFixed(3);
+
+    /* 뒤로 당긴 거리는 음수. 발사는 앞이 빠른 곡선(0.72제곱)이라 시작부터 튀어 나간다. */
+    var back = -0.09 * aimLen * easeOutCubic(nock);
+    var travel = back + (aimLen - back) * Math.pow(release, 0.72);
+    var ax = AIM.x0 + ux * travel;
+    var ay = AIM.y0 + uy * travel;
+    /* 당길 때 살짝 눌렸다가 놓는 순간 길어진다 — 정지 화면에서도 힘이 실려 보인다 */
+    var stretch = 1 + 0.5 * release * (1 - release) * 4;
+    aimArrow.setAttribute('transform',
+      'translate(' + ax.toFixed(1) + ',' + ay.toFixed(1) + ') rotate(' + aimDeg.toFixed(1) +
+      ') scale(' + stretch.toFixed(2) + ',1)');
+    aimArrow.setAttribute('opacity', (nock > 0 && release < 1 ? Math.min(1, nock * 4) : 0).toFixed(2));
+
+    var grow = 0.55 + 0.45 * easeOutCubic(clamp01(p / 0.4));
+    var hit = clamp01((p - 0.465) / 0.065);
+    var gone = clamp01((p - 0.50) / 0.09);
+    var sc = AIM.r * (grow + 1.6 * Math.sin(hit * Math.PI)) * (1 - gone);
     aimTarget.setAttribute('transform',
       'translate(' + AIM.x1.toFixed(1) + ',' + AIM.y1.toFixed(1) + ') rotate(' + (p * 90).toFixed(1) + ') scale(' + Math.max(0, sc).toFixed(2) + ')');
     aimTarget.setAttribute('opacity', (1 - gone).toFixed(3));
 
-    /* 조각은 여덟 갈래로 흩어진다. 밀려나는 거리는 easeOut, 투명도는 뒤늦게 빠져야
-       "터졌다"로 읽힌다 — 둘을 같은 곡선에 묶으면 그냥 사라지는 것처럼 보인다. */
-    var burst = clamp01((p - 0.54) / 0.26);
+    /* 밀려나는 거리는 easeOut, 투명도는 뒤늦게 빠져야 "터졌다"로 읽힌다 —
+       둘을 같은 곡선에 묶으면 그냥 사라지는 것처럼 보인다. */
+    var burst = clamp01((p - 0.50) / 0.36);
     aimBurst.setAttribute('opacity', burst > 0 && burst < 1 ? 1 : 0);
     if (burst > 0 && burst < 1) {
-      var push = easeOutCubic(burst) * AIM.r * 5.2;
-      var fadeS = 1 - clamp01((burst - 0.35) / 0.65);
+      var push = easeOutCubic(burst) * AIM.r * 6;
+      var fadeS = 1 - clamp01((burst - 0.42) / 0.58);
       for (var i = 0; i < shards.length; i++) {
         var a = (i / shards.length) * Math.PI * 2;
         var sx = AIM.x1 + Math.cos(a) * push;
         var sy = AIM.y1 + Math.sin(a) * push;
         shards[i].setAttribute('transform',
           'translate(' + sx.toFixed(1) + ',' + sy.toFixed(1) + ') rotate(' + (a * 180 / Math.PI + 90).toFixed(1) +
-          ') scale(' + (AIM.r * 0.5 * fadeS).toFixed(2) + ',' + (AIM.r * (0.9 + burst * 0.8)).toFixed(2) + ')');
+          ') scale(' + (AIM.r * 0.5 * fadeS).toFixed(2) + ',' + (AIM.r * (0.9 + burst * 0.9)).toFixed(2) + ')');
         shards[i].setAttribute('opacity', fadeS.toFixed(3));
       }
     }
-
-    /* 암전 — 다음 씬이 먹빛이라 같은 색으로 덮으면 경계가 사라진다. 0.96까지만 —
-       완전히 검게 만들면 마지막 한 프레임이 빈 화면이 된다. */
-    if (aimFade) aimFade.style.opacity = (0.96 * easeOutCubic(clamp01((p - 0.74) / 0.26))).toFixed(3);
   }
 
   /* ── 상단바 면색 — 지금 상단바 밑에 깔린 씬을 따라간다 ──
@@ -544,6 +559,16 @@ document.documentElement.classList.add('js');
 
   layoutAim();
 
+  /* 씬 끝은 먹빛으로 잠기고 다음 씬은 그 먹빛에서 밝아진다 — 두 씬의 경계선을 지운다.
+     첫 씬(#top)은 시작 페이드가 없다. 첫 화면이 검게 시작하면 안 되기 때문이다. */
+  function drawVeil(sec, p) {
+    var v = sec.querySelector(':scope > .scene-stage > .scene-veil');
+    if (!v) return;
+    var vIn = sec.classList.contains('scene-night') ? 0 : (1 - clamp01(p / 0.10));
+    var vOut = clamp01((p - 0.80) / 0.20) * 0.96;
+    v.style.opacity = Math.max(vIn, vOut).toFixed(3);
+  }
+
   var ticking = false;
   function update() {
     ticking = false;
@@ -559,6 +584,7 @@ document.documentElement.classList.add('js');
       else if (s.id === 'tamsadae-z') drawShots(p);
       else if (s.id === 'branch') drawBranch(p);
       else if (s.id === 'top') drawAim(p);
+      drawVeil(s, p);
     }
     syncBar();
   }
@@ -601,10 +627,10 @@ document.documentElement.classList.add('js');
   var bar = document.querySelector('.topbar');
   var hint = document.getElementById('tap-hint');
 
-  /* 정지점: 각 섹션의 머리. 씬은 여기에 "연출이 끝나는 지점"을 하나 더 갖는다 —
-     그래야 첫 탭이 그 씬을 재생하고, 두 번째 탭이 다음 씬으로 넘어간다. */
+  /* 정지점은 섹션의 머리뿐이다. 초판은 씬마다 "연출이 끝나는 지점"을 하나 더 뒀는데,
+     그러면 첫 탭이 암전된 상태에서 멈추고 한 번 더 눌러야 넘어간다 — 번거롭다.
+     지금은 탭 한 번이 그 씬을 통째로 재생하고 다음 씬 머리에 내려놓는다. */
   function stops() {
-    var vh = window.innerHeight;
     var barH = bar ? bar.offsetHeight : 0;
     var list = [];
     var secs = main.children;
@@ -613,10 +639,6 @@ document.documentElement.classList.add('js');
       if (s.tagName !== 'SECTION') continue;
       var top = s.getBoundingClientRect().top + window.scrollY;
       list.push(Math.max(0, Math.round(top - barH)));
-      if (s.classList.contains('scene')) {
-        var span = s.offsetHeight - vh;
-        if (span > 40) list.push(Math.round(top + span));
-      }
     }
     var foot = document.querySelector('.footer');
     if (foot) list.push(Math.round(foot.getBoundingClientRect().top + window.scrollY - barH));
@@ -624,7 +646,28 @@ document.documentElement.classList.add('js');
     return list;
   }
 
-  var lock = 0;
+  /* 브라우저 기본 smooth 스크롤은 길이도 곡선도 제각각이라, 씬 하나가 눈 깜짝할 사이에
+     지나가기도 하고 늘어지기도 한다. 직접 굴려서 파열이 보일 만큼의 시간을 확보한다.
+     모션 감소 설정이면 그냥 즉시 이동한다. */
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var busyUntil = 0;
+  function glide(to) {
+    if (reduce) { window.scrollTo(0, to); return; }
+    var from = window.scrollY, dist = to - from;
+    var dur = Math.min(1100, Math.max(460, Math.abs(dist) * 0.62));
+    busyUntil = performance.now() + dur;
+    var t0 = null;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var k = Math.min(1, (ts - t0) / dur);
+      /* easeInOutCubic — 출발과 도착이 부드럽고 가운데가 빠르다 */
+      var e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      window.scrollTo(0, Math.round(from + dist * e));
+      if (k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   document.addEventListener('click', function (e) {
     var t = e.target;
     if (!t || !t.closest) return;
@@ -632,7 +675,9 @@ document.documentElement.classList.add('js');
     if (t.closest('a, button, input, textarea, select, label, [role="button"], .intro')) return;
     /* 글을 긁어 읽는 중이면 화면을 옮기지 않는다 */
     if (window.getSelection && String(window.getSelection()).length > 0) return;
-    if (e.timeStamp - lock < 450) return;    /* 연타·더블탭 확대가 두 칸 넘기지 않게 */
+    /* 활공 중에 또 눌리면 중간 위치를 기준으로 다음 칸을 잡아 두 칸이 넘어간다.
+       고정된 대기 시간이 아니라 실제 활공 길이만큼 잠근다(거리에 따라 460~1100ms). */
+    if (performance.now() < busyUntil) return;
 
     var y = window.scrollY, list = stops(), next = null;
     for (var i = 0; i < list.length; i++) {
@@ -640,8 +685,7 @@ document.documentElement.classList.add('js');
     }
     if (next === null) return;               /* 끝에 닿았으면 아무 일도 하지 않는다 */
 
-    lock = e.timeStamp;
-    window.scrollTo({ top: next, behavior: 'smooth' });
+    glide(next);
     if (hint) hint.classList.add('is-gone');
   });
 })();

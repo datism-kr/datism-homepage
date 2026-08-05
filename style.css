@@ -1181,9 +1181,11 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
 }
 .aim-arrow { fill: none; stroke: var(--star); stroke-width: 2.5; stroke-linecap: round; }
 
-/* 명중 뒤 암전 — 다음 씬(『탐사대 Z』)이 먹빛이라, 같은 색으로 덮으면 경계가 사라진다.
-   빛무리로 바닥을 밝히던 초판을 대신한다. 하늘과 카피 위를 모두 덮어야 하므로 무대 최상단. */
-.aim-fade {
+/* 씬 이음매를 지우는 베일. 어두운 씬은 끝에서 먹빛으로 잠기고 다음 씬은 그 먹빛에서
+   밝아진다 — 두 씬 사이의 경계선이 아예 안 보이므로, 탭 한 번이 "다음 슬라이드"로 읽힌다.
+   첫 씬(#top)만 시작 페이드가 없다. 첫 화면이 검게 시작하면 안 되기 때문이다.
+   하늘·카피 위를 모두 덮어야 하므로 무대 최상단(z-index 2). */
+.scene-veil {
   position: absolute;
   inset: 0;
   z-index: 2;
