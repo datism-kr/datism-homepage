@@ -414,9 +414,9 @@ document.documentElement.classList.add('js');
      0.3~0.7 구간에서만 옮긴다. 씬 진입·이탈에서 이미 움직이고 있으면
      "내가 옮기고 있다"는 느낌이 사라진다. */
   var branch = document.getElementById('branch');
-  function drawBranch(p) {
+  function drawBranch(q) {
     if (!branch) return;
-    branch.style.setProperty('--w', clamp01((p - 0.3) / 0.4).toFixed(3));
+    branch.style.setProperty('--w', clamp01((q - 0.3) / 0.4).toFixed(3));
   }
 
   /* ── 씬 0 · 밤하늘 — 겨냥 → 발사 → 명중 → 파열 → 암전 ──
@@ -576,6 +576,45 @@ document.documentElement.classList.add('js');
     v.style.opacity = Math.max(vIn, vOut).toFixed(3);
   }
 
+  /* ── 제품 덱 — 한 무대 세 장 ──
+     구간을 나누고, 판마다 자기 몫의 진행률 q(0~1)로 연출한다. 판 경계에서는
+     FZ만큼 겹쳐 교차시킨다 — 나가는 판이 위로 빠지고 들어오는 판이 아래에서 올라온다.
+     배경(흐린 화면 3장)은 구간과 무관하게 씬 전체 p로 흐른다. 그래서 배경이 멈춰 있고
+     앞의 판만 바뀌는 것처럼 보인다. */
+  var PANELS = [
+    { key: 'intro',  from: 0.00, to: 0.28 },
+    { key: 'record', from: 0.28, to: 0.66 },
+    { key: 'branch', from: 0.66, to: 1.00 }
+  ];
+  var FZ = 0.06;      /* 판이 갈리는 구간(씬 진행률 기준) */
+  var deckEls = null;
+
+  function drawDeck(p) {
+    if (!deckEls) {
+      deckEls = {};
+      var list = document.querySelectorAll('#tamsadae-z .panel');
+      for (var k = 0; k < list.length; k++) deckEls[list[k].getAttribute('data-panel')] = list[k];
+      if (!list.length) return;
+    }
+    drawShots(p);
+    for (var i = 0; i < PANELS.length; i++) {
+      var P = PANELS[i], el = deckEls[P.key];
+      if (!el) continue;
+      var inA = clamp01((p - (P.from - FZ)) / FZ);          /* 들어옴 */
+      var outA = clamp01((p - (P.to - FZ)) / FZ);           /* 나감 */
+      var show = inA * (1 - outA);
+      el.style.opacity = show.toFixed(3);
+      /* 나가는 판은 위로, 들어오는 판은 아래에서 — 세로 슬라이드 한 방향 */
+      el.style.transform = 'translateY(' + (((1 - inA) * 22) - (outA * 22)).toFixed(1) + 'px)';
+      el.style.pointerEvents = show > 0.5 ? '' : 'none';
+
+      if (show <= 0) continue;
+      var q = clamp01((p - P.from) / (P.to - P.from));
+      if (P.key === 'record') drawRedact(q);
+      else if (P.key === 'branch') drawBranch(q);
+    }
+  }
+
   var ticking = false;
   function update() {
     ticking = false;
@@ -587,9 +626,7 @@ document.documentElement.classList.add('js');
       var span = s.offsetHeight - vh;
       var p = span > 0 ? clamp01(-r.top / span) : (r.top < 0 ? 1 : 0);
       s.style.setProperty('--p', p.toFixed(4));
-      if (s.id === 'record') drawRedact(p);
-      else if (s.id === 'tamsadae-z') drawShots(p);
-      else if (s.id === 'branch') drawBranch(p);
+      if (s.id === 'tamsadae-z') drawDeck(p);
       else if (s.id === 'top') drawAim(p);
       drawVeil(s, p, r.top);
     }
@@ -648,10 +685,13 @@ document.documentElement.classList.add('js');
       list.push(Math.max(0, Math.round(top - barH)));
       /* data-hold — 그 씬 안에서 한 번 멈춰야 할 자리(연출이 만들어낸 내용을 읽는 지점).
          내용이 스크롤로 완성되는 씬만 갖는다: 지워진 기록이 풀린 문장, 갈래가 넘어간 상태. */
-      var hold = parseFloat(s.getAttribute('data-hold'));
-      if (hold > 0) {
+      var holds = (s.getAttribute('data-hold') || '').trim();
+      if (holds) {
         var span = s.offsetHeight - window.innerHeight;
-        if (span > 40) list.push(Math.round(top + span * hold));
+        if (span > 40) holds.split(/\s+/).forEach(function (h) {
+          var f = parseFloat(h);
+          if (f > 0 && f < 1) list.push(Math.round(top + span * f));
+        });
       }
     }
     var foot = document.querySelector('.footer');
