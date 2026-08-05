@@ -1201,12 +1201,15 @@ html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
   color: var(--star);
   margin: 0 0 20px;
 }
+/* 주 카피가 라틴이므로 로고 서체로 조판한다 — 인트로·키커와 같은 글자꼴·같은 굵기.
+   자간은 워드마크에 박힌 값(-0.024em)보다 아주 조금 풀었다: 로고는 여섯 글자 한 덩어리지만
+   이건 읽는 문장이라 그만큼 조이면 단어 경계가 뭉갠다. */
 .aim-line-1 {
-  font-family: var(--f-head);
-  font-weight: 800;
-  font-size: clamp(26px, 4.6vw, 46px);
-  line-height: 1.42;
-  letter-spacing: -0.035em;
+  font-family: var(--f-logo);
+  font-weight: 700;
+  font-size: clamp(28px, 5vw, 54px);
+  line-height: 1.24;
+  letter-spacing: -0.018em;
   color: var(--nt-text);
   margin: 0;
 }
