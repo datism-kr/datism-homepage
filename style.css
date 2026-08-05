@@ -542,3 +542,31 @@ h3 {
   }
   .btn-toy:active { transform: none; }
 }
+
+/* ── 14. 인터랙션 레이어 — 프로그레시브 인핸스먼트 ─
+   숨김 초기 상태는 .js 클래스(main.js가 JS 작동 시에만 부여)와
+   no-preference 모션 조건 둘 다 아래에서만 적용한다.
+   JS 미작동·모션 감소·크롤러는 이 블록 자체가 매치되지 않아
+   항상 정적 페이지와 동일하게 보인다. ────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+  }
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .js .reveal-hero {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+  .js .hero-art.reveal-hero { transition-delay: 0.12s; }
+  .js .reveal-hero.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
