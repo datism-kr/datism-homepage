@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Datism — 워드마크·푸터 검수 시트</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="../style.css">
+<style>
+  /* 검수 전용 — 실제 사이트에는 없다. style.css의 assets/ 상대경로가 _preview/ 기준으로
+     어긋나므로 여기서만 마스크 경로를 한 단계 위로 다시 잡는다. */
+  .wordmark-type    { -webkit-mask-image:url('../assets/wordmark_S.svg'); mask-image:url('../assets/wordmark_S.svg'); }
+  .wordmark-type-lg { -webkit-mask-image:url('../assets/wordmark_L.svg'); mask-image:url('../assets/wordmark_L.svg'); }
+  body { padding: 26px 0 0; }
+  .sheet { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+  .strip { display:flex; align-items:flex-end; gap:26px; flex-wrap:wrap; padding:18px 20px; border:1px solid var(--line); border-radius:12px; margin-bottom:12px; }
+  .strip.dark { background:#1e1c1a; color:#fff; border-color:#3a3733; }
+  .cap { font-size:11px; color:var(--dim); letter-spacing:.06em; margin-bottom:6px; }
+  .strip.dark .cap { color:#948d81; }
+  .u { display:block; }
+  h2.sh { font-size:18px; margin:26px 0 10px; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <h2 class="sh">S컷 (wordmark_S.svg) — Space Grotesk 볼드 · 실사용 크기</h2>
+  <div class="strip">
+    <div class="u"><p class="cap">16px 최소</p><span class="wordmark-type" style="height:16px"></span></div>
+    <div class="u"><p class="cap">19px 상단바</p><span class="wordmark-type"></span></div>
+    <div class="u"><p class="cap">28px</p><span class="wordmark-type" style="height:28px"></span></div>
+    <div class="u"><p class="cap">56px 확대검수</p><span class="wordmark-type" style="height:56px"></span></div>
+  </div>
+  <div class="strip dark">
+    <div class="u"><p class="cap">19px</p><span class="wordmark-type"></span></div>
+    <div class="u"><p class="cap">56px</p><span class="wordmark-type" style="height:56px"></span></div>
+    <div class="u"><p class="cap">마크 + 워드마크 록업</p>
+      <span style="display:inline-flex;align-items:center;gap:12px">
+        <svg width="38" height="28" viewBox="0 0 173 127" fill="currentColor" aria-hidden="true"><path d="M 50.67 115.33 C50.30,114.97 50.00,108.23 50.00,100.37 C50.00,84.14 49.01,86.31 60.85,76.67 L 67.20 71.50 L 59.44 71.21 C51.98,70.92 51.57,71.02 48.55,73.96 C45.59,76.82 41.00,78.11 41.00,76.08 C41.00,75.58 42.24,74.24 43.75,73.12 L 46.50 71.06 L 43.78 71.03 C42.16,71.01 39.70,72.21 37.65,74.00 C34.42,76.84 31.00,77.96 31.00,76.19 C31.00,75.74 32.35,74.08 34.01,72.49 L 37.02 69.61 L 33.99 66.49 C29.35,61.71 32.53,60.05 37.82,64.50 C39.45,65.88 41.81,67.00 43.05,67.00 C45.18,67.00 45.21,66.89 43.65,65.17 C40.08,61.22 43.66,60.69 48.18,64.50 C50.81,66.71 52.08,67.00 59.16,67.00 L 67.16 67.00 L 61.83 62.14 C58.90,59.46 55.04,56.05 53.25,54.55 L 50.00 51.82 L 50.00 36.91 L 50.00 22.00 L 70.34 22.00 C91.73,22.00 94.76,22.45 104.46,27.06 C115.37,32.25 126.71,47.88 127.80,59.25 L 128.25 64.00 L 123.24 64.00 C118.23,64.00 118.22,63.99 117.53,60.25 C115.69,50.34 108.33,40.83 98.50,35.68 C92.63,32.60 92.16,32.53 76.75,32.18 L 61.00 31.82 L 61.07 44.66 L 61.14 57.50 L 67.03 62.25 L 72.92 67.00 L 108.41 67.00 L 143.90 67.00 L 142.44 63.50 C141.41,61.06 141.32,60.00 142.12,60.00 C143.56,60.00 159.00,68.19 158.99,68.94 C158.98,69.25 155.37,71.44 150.97,73.80 C142.71,78.24 139.80,78.56 142.49,74.71 C143.32,73.53 144.00,72.21 144.00,71.78 C144.00,71.35 128.01,71.00 108.46,71.00 L 72.92 71.00 L 67.03 75.75 L 61.14 80.50 L 61.07 92.75 L 61.00 105.00 L 69.25 105.13 C73.79,105.20 78.85,105.36 80.50,105.49 C85.15,105.84 94.03,104.03 98.32,101.84 C107.16,97.33 114.75,87.97 117.05,78.75 L 118.24 74.00 L 123.12 74.00 C127.41,74.00 128.00,74.25 128.00,76.10 C128.00,83.07 120.97,97.06 114.39,103.18 C109.22,107.98 99.96,112.85 92.96,114.44 C85.96,116.03 52.08,116.75 50.67,115.33 Z"/></svg>
+        <span class="wordmark-type" style="height:26px"></span>
+      </span>
+    </div>
+  </div>
+
+  <h2 class="sh">L컷 (wordmark_L.svg) — Space Grotesk 라이트 · 대형 전용</h2>
+  <div class="strip">
+    <div class="u"><p class="cap">28px 최소</p><span class="wordmark-type-lg" style="height:28px"></span></div>
+    <div class="u"><p class="cap">64px</p><span class="wordmark-type-lg" style="height:64px"></span></div>
+  </div>
+  <div class="strip dark">
+    <div class="u"><p class="cap">41px 푸터 실사용</p><span class="wordmark-type-lg"></span></div>
+    <div class="u"><p class="cap">96px 확대검수</p><span class="wordmark-type-lg" style="height:96px"></span></div>
+  </div>
+
+  <h2 class="sh">푸터 실물</h2>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <nav class="footer-nav" aria-label="푸터 메뉴">
+      <a href="#">제품</a>
+      <a href="#">회사</a>
+      <a href="#">문의</a>
+      <a class="em" href="#">개인정보처리방침</a>
+    </nav>
+
+    <div class="footer-corp">
+      <p class="row">
+        <span>데이티즘 주식회사 (Datism Co., Ltd.)</span>
+        <span>대표 최유리</span>
+      </p>
+      <p class="row">
+        <span>서울특별시 서초구 서초대로73길 40, 815호</span>
+        <span>사업자등록번호 801-87-02979</span>
+        <span>E-mail <a href="mailto:contact@datism.kr">contact@datism.kr</a></span>
+      </p>
+      <p class="footer-nospam">
+        본 사이트에 게시된 이메일 주소가 전자우편 수집 프로그램이나 그 밖의 기술적 장치를 이용해
+        무단으로 수집되는 것을 거부하며, 이를 위반하면 정보통신망법에 따라 처벌될 수 있습니다.
+      </p>
+      <p class="footer-cr">&copy; 2024–2026 Datism Co., Ltd. All rights reserved.</p>
+    </div>
+
+    <div class="footer-sign">
+      <svg class="footer-sign-mark" viewBox="0 0 173 127" fill="currentColor" aria-hidden="true" focusable="false"><path d="M 50.67 115.33 C50.30,114.97 50.00,108.23 50.00,100.37 C50.00,84.14 49.01,86.31 60.85,76.67 L 67.20 71.50 L 59.44 71.21 C51.98,70.92 51.57,71.02 48.55,73.96 C45.59,76.82 41.00,78.11 41.00,76.08 C41.00,75.58 42.24,74.24 43.75,73.12 L 46.50 71.06 L 43.78 71.03 C42.16,71.01 39.70,72.21 37.65,74.00 C34.42,76.84 31.00,77.96 31.00,76.19 C31.00,75.74 32.35,74.08 34.01,72.49 L 37.02 69.61 L 33.99 66.49 C29.35,61.71 32.53,60.05 37.82,64.50 C39.45,65.88 41.81,67.00 43.05,67.00 C45.18,67.00 45.21,66.89 43.65,65.17 C40.08,61.22 43.66,60.69 48.18,64.50 C50.81,66.71 52.08,67.00 59.16,67.00 L 67.16 67.00 L 61.83 62.14 C58.90,59.46 55.04,56.05 53.25,54.55 L 50.00 51.82 L 50.00 36.91 L 50.00 22.00 L 70.34 22.00 C91.73,22.00 94.76,22.45 104.46,27.06 C115.37,32.25 126.71,47.88 127.80,59.25 L 128.25 64.00 L 123.24 64.00 C118.23,64.00 118.22,63.99 117.53,60.25 C115.69,50.34 108.33,40.83 98.50,35.68 C92.63,32.60 92.16,32.53 76.75,32.18 L 61.00 31.82 L 61.07 44.66 L 61.14 57.50 L 67.03 62.25 L 72.92 67.00 L 108.41 67.00 L 143.90 67.00 L 142.44 63.50 C141.41,61.06 141.32,60.00 142.12,60.00 C143.56,60.00 159.00,68.19 158.99,68.94 C158.98,69.25 155.37,71.44 150.97,73.80 C142.71,78.24 139.80,78.56 142.49,74.71 C143.32,73.53 144.00,72.21 144.00,71.78 C144.00,71.35 128.01,71.00 108.46,71.00 L 72.92 71.00 L 67.03 75.75 L 61.14 80.50 L 61.07 92.75 L 61.00 105.00 L 69.25 105.13 C73.79,105.20 78.85,105.36 80.50,105.49 C85.15,105.84 94.03,104.03 98.32,101.84 C107.16,97.33 114.75,87.97 117.05,78.75 L 118.24 74.00 L 123.12 74.00 C127.41,74.00 128.00,74.25 128.00,76.10 C128.00,83.07 120.97,97.06 114.39,103.18 C109.22,107.98 99.96,112.85 92.96,114.44 C85.96,116.03 52.08,116.75 50.67,115.33 Z"/></svg>
+      <span class="wordmark-type-lg" role="img" aria-label="Datism"></span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

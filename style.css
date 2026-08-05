@@ -5,19 +5,44 @@
    질감 문법: 웜 뉴트럴 면 + 파스텔은 소면적에만 + 그림자는 전부 blur 0.
    ============================================================ */
 
+/* ── 0. 서체 ─────────────────────────────────────── */
+/* 제목: SUIT ExtraBold — 800 한 벌만 쓰므로 가변폰트(610KB) 대신 정적 컷(168KB)을
+   자체 호스팅한다. CDN 장애와 무관하게 브랜드 서체가 뜨고, swap으로 FOIT도 없다.
+   라이선스: SIL OFL 1.1 (c) 2022 SUNN — 원문 assets/fonts/SUIT-OFL.txt. docs/brand_assets.md 참조. */
+@font-face {
+  font-family: 'SUIT';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('assets/fonts/SUIT-ExtraBold.woff2') format('woff2');
+}
+
 /* ── 1. 토큰 ─────────────────────────────────────── */
 :root {
+  /* 본문 Pretendard는 92개 unicode-range 서브셋이라 CDN에서 필요한 조각만 받는다
+     — 자체 호스팅하면 그 장점이 사라지므로 여기만 jsDelivr를 쓴다. */
+  --f-head: 'SUIT', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  --f-body: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+
   --bg: #faf7f0;      /* 웜 화이트 바탕 */
   --card: #ffffff;    /* 카드·버튼 면 */
   --line: #e9e2d4;    /* 테두리·구분선 */
   --text: #45413c;    /* 본문 잉크 */
-  --dim: #9b948a;     /* 보조 텍스트 */
-  --coral: #ff8a75;   /* 포인트1 강조 */
+  --dim: #746d62;     /* 보조 텍스트 — 구 #9b948a는 크림 위 2.81:1로 AA 미달이었다 (현 4.77:1) */
+  --coral: #ff8a75;   /* 포인트1 강조 — 컬러 "면"용 */
+  --coral-ink: #b8452e; /* 코랄 "글자"용. #ff8a75는 크림 위 2.15:1이라 텍스트로 못 쓴다 (현 5.0:1) */
   --sky: #79b8e8;     /* 포인트2 진행/링크 */
   --lemon: #ffd056;   /* 포인트3 주목 */
   --mint: #7fd6ae;    /* 포인트4 안전 */
   --grape: #b39ddb;   /* 포인트5 인물/기록 */
   --shadow: 0 3px 0 rgba(90, 80, 60, 0.08);
+
+  /* 다크 푸터 — 크림 본문 아래를 눌러주는 앵커 면. 라이트/다크 각각 별도 값을 둔다.
+     본문 --dim(#9b948a)은 어두운 면에서 대비가 모자라 푸터 전용 톤을 따로 잡았다. */
+  --ft-bg: #1e1c1a;
+  --ft-line: #3a3733;
+  --ft-text: #c9c4bb;   /* #1e1c1a 위 9.8:1 */
+  --ft-dim: #948d81;    /* #1e1c1a 위 5.2:1 — WCAG AA */
 
   /* 토큰 외 유추값 — 랜딩 페이지용 레이아웃 상수.
      게임 정본은 폰 프레임(560px)이지만 여기는 데스크톱 문서형 페이지다. */
@@ -33,8 +58,14 @@
     --card: #201f27;
     --line: #33313d;
     --text: #cfcbd6;
-    --dim: #6f6a7a;
+    --dim: #8c8699;      /* 구 #6f6a7a는 3.44:1로 AA 미달 (현 5.13:1) */
+    --coral-ink: #ff8a75; /* 어두운 바탕에서는 원 코랄이 7.8:1 — 그대로 쓴다 */
     --shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+    /* 다크에서는 푸터가 본문(#17161c)보다 더 내려가야 면이 구분된다 */
+    --ft-bg: #100f13;
+    --ft-line: #2b2934;
+    --ft-text: #b9b4c2;
+    --ft-dim: #87818f;   /* #100f13 위 5.1:1 — WCAG AA */
     /* 파스텔 5색(coral/sky/lemon/mint/grape)은 다크에서도 그대로 유지 — 정본 §1-2 */
   }
 }
@@ -50,16 +81,19 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Gowun Dodum', 'Apple SD Gothic Neo', sans-serif;
+  font-family: var(--f-body);
   line-height: 1.8;
   font-size: 16px;
+  letter-spacing: -0.005em;   /* 토큰 외 유추값: Pretendard 한글 본문 미세 조임 */
   -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3 {
-  font-family: 'Jua', sans-serif;
-  font-weight: 400;
-  line-height: 1.35;   /* 토큰 외 유추값: 헤딩은 본문 1.8보다 좁게 */
+  font-family: var(--f-head);
+  font-weight: 800;          /* SUIT ExtraBold — 자체 호스팅한 유일 웨이트 */
+  letter-spacing: -0.03em;   /* 토큰 외 유추값: SUIT 굵은 컷은 조여야 덩어리로 읽힌다 */
+  line-height: 1.35;         /* 토큰 외 유추값: 헤딩은 본문 1.8보다 좁게 */
   margin: 0;
 }
 
@@ -99,6 +133,20 @@ a { color: inherit; }
   top: 12px;
 }
 
+/* 워드마크가 SVG 아웃라인이라 화면에는 글자가 없다 — 접근성 이름을 여기서 준다 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ── 3. 상단바 ───────────────────────────────────── */
 .topbar {
   position: sticky;
@@ -119,10 +167,7 @@ a { color: inherit; }
 .wordmark {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-family: 'Jua', sans-serif;
-  font-size: 22px;    /* 토큰 외 유추값: 워드마크(정본 최대 30px 이내) */
-  letter-spacing: 0.02em;
+  gap: 9px;
   text-decoration: none;
   padding: 4px 2px;
 }
@@ -130,6 +175,41 @@ a { color: inherit; }
 .wordmark-mark {
   flex: none;
   display: block;
+}
+
+/* 워드마크 활자부는 폰트가 아니라 SVG 아웃라인이다 — 폰트 로딩 실패·OS별
+   렌더링 차이·자간 미세차에서 자유롭다. mask로 얹어 currentColor를 그대로 탄다
+   (다크 모드 대응이 자동). 원본 1벌씩만 두고 여기서 크기만 정한다. */
+.wordmark-type,
+.wordmark-type-lg {
+  display: block;
+  flex: none;
+  background: currentColor;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+}
+
+/* 두 컷 모두 캡하이트가 박스의 70/76.801 = 91.1%다 — height는 박스 높이이지
+   글자 높이가 아니다. 글자 실높이 ≒ height × 0.911. */
+
+/* S컷(볼드) — 상단바. 346.4:76.801 */
+.wordmark-type {
+  height: 19px;   /* 토큰 외 유추값: 글자 실높이 17.3px — 마크와 시각 균형을 맞춘 값 */
+  aspect-ratio: 346.4 / 76.801;
+  -webkit-mask-image: url('assets/wordmark_S.svg');
+          mask-image: url('assets/wordmark_S.svg');
+}
+
+/* L컷(라이트) — 푸터 사인오프. 340.3:76.801, 최소 높이 28px 규정 준수 */
+.wordmark-type-lg {
+  height: 41px;   /* 글자 실높이 37.4px */
+  aspect-ratio: 340.3 / 76.801;
+  -webkit-mask-image: url('assets/wordmark_L.svg');
+          mask-image: url('assets/wordmark_L.svg');
 }
 
 .nav {
@@ -172,14 +252,20 @@ a { color: inherit; }
 
 .section-kicker,
 .eyebrow {
-  font-family: 'Jua', sans-serif;
+  font-family: var(--f-head);
+  font-weight: 800;
   font-size: 12.5px;
   letter-spacing: 0.08em;
-  color: var(--coral);
+  color: var(--coral-ink);   /* 글자이므로 면색이 아니라 잉크 코랄 */
   margin: 0 0 8px;
 }
 
-.eyebrow { color: var(--dim); }
+/* 히어로 아이브로우는 영문 태그라인(Analyze, Build, Craft.) 자리 —
+   섹션 키커와 달리 브랜드 서명이므로 코랄을 유지하고 한 단계 키운다. */
+.eyebrow {
+  font-size: 13.5px;
+  letter-spacing: 0.1em;
+}
 
 h2 {
   font-size: 28px;   /* 정본 스케일 상한(30px) 이내 */
@@ -213,9 +299,10 @@ h3 {
 }
 
 .hero h1 {
-  font-size: 44px;      /* 토큰 외 유추값: 히어로 헤드라인(정본 최대 30px의 랜딩 확장분) */
+  font-size: 41px;      /* 토큰 외 유추값: 히어로 헤드라인. 카피가 길어져 44 → 41 */
   margin: 0 0 18px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.035em;   /* 큰 글자일수록 더 조인다 */
+  line-height: 1.32;
 }
 
 .hero .lead { margin-bottom: 14px; }
@@ -226,8 +313,8 @@ h3 {
 }
 
 .hero-note b {
-  font-family: 'Jua', sans-serif;
-  font-weight: 400;
+  font-family: var(--f-head);
+  font-weight: 800;
 }
 
 .hero-art {
@@ -250,7 +337,8 @@ h3 {
 /* ── 6. 토이 버튼 — 주 CTA 1곳 전용 ──────────────── */
 .btn-toy {
   display: inline-block;
-  font-family: 'Jua', sans-serif;
+  font-family: var(--f-head);
+  font-weight: 800;
   font-size: 15.5px;
   text-decoration: none;
   color: var(--text);
@@ -283,7 +371,8 @@ h3 {
 
 .badge-dev {
   display: inline-block;
-  font-family: 'Jua', sans-serif;
+  font-family: var(--f-head);
+  font-weight: 800;
   font-size: 12.5px;
   line-height: 1.6;   /* 토큰 외 유추값: 필 배지 내부 행간 */
   color: #fff;        /* 컬러 면 위 글자는 #fff — 정본 §1-3 */
@@ -375,7 +464,8 @@ h3 {
 
 .spec dt {
   flex: 0 0 84px;   /* 토큰 외 유추값: 항목명 폭 */
-  font-family: 'Jua', sans-serif;
+  font-family: var(--f-head);
+  font-weight: 800;
   font-size: 13px;
   color: var(--dim);
 }
@@ -427,7 +517,8 @@ h3 {
 }
 
 .contact-label {
-  font-family: 'Jua', sans-serif;
+  font-family: var(--f-head);
+  font-weight: 800;
   font-size: 13px;
   color: var(--dim);
   margin-bottom: 2px;
@@ -474,36 +565,143 @@ h3 {
   color: var(--dim);
 }
 
-/* ── 11. 푸터 ────────────────────────────────────── */
-.footer {
+/* ── 11. 맨 위로 ─────────────────────────────────── */
+.totop-bar {
   border-top: 1px solid var(--line);
-  padding: 26px 0 34px;   /* 토큰 외 유추값 */
+  padding: 12px 0;   /* 토큰 외 유추값 */
 }
 
-.footer p {
-  font-size: 12.5px;
-  color: var(--dim);
-}
-
-.footer-inner {
+.totop-bar .container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px 16px;   /* 토큰 외 유추값 */
+  justify-content: flex-end;
 }
 
-.footer-link {
-  font-size: 12.5px;
+.totop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
   color: var(--dim);
   text-decoration: none;
+  padding: 7px 15px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  transition: color 0.15s, border-color 0.15s;
 }
 
-.footer-link:hover { color: var(--text); }
+.totop:hover { color: var(--text); border-color: var(--coral); }
+
+/* ── 11-1. 푸터 ──────────────────────────────────── */
+/* 크림 본문 아래를 눌러주는 다크 앵커 면. 카피 스트립은 두지 않는다 —
+   회사 소개 문면은 히어로가 전담한다(중복 금지). */
+.footer {
+  background: var(--ft-bg);
+  color: var(--ft-text);
+  padding: 34px 0 40px;   /* 토큰 외 유추값 */
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--ft-line);
+}
+
+.footer-nav a {
+  position: relative;
+  font-size: 13px;
+  color: var(--ft-text);
+  text-decoration: none;
+  padding: 5px 15px 5px 0;
+  margin-right: 3px;
+}
+
+/* 항목 사이 세로 구분선 — 마지막 항목 뒤에는 붙이지 않는다 */
+.footer-nav a:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 11px;
+  background: var(--ft-line);
+}
+
+.footer-nav a:hover { color: var(--coral); }
+.footer-nav a.em { font-weight: 600; }
+
+.footer-corp {
+  padding-top: 16px;
+  font-size: 12.5px;
+  line-height: 1.95;
+  color: var(--ft-dim);
+}
+
+/* 가운뎃점으로 이어 붙이는 법인정보 행 — 줄바꿈되면 점도 함께 사라진다 */
+.footer-corp .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 15px;
+}
+
+.footer-corp .row span {
+  position: relative;
+}
+
+.footer-corp .row span:not(:last-child)::after {
+  content: "·";
+  position: absolute;
+  right: -10px;
+  opacity: 0.55;
+}
+
+.footer-corp a { color: inherit; }
+.footer-corp a:hover { color: var(--ft-text); }
+
+.footer-nospam {
+  margin-top: 10px;
+  font-size: 11.5px;
+  line-height: 1.75;
+  max-width: 62ch;   /* 토큰 외 유추값: 가독 행폭 */
+  opacity: 0.9;
+}
+
+.footer-cr {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+/* 사인오프 — 마크(D 관통 화살)와 워드마크를 한 록업으로 묶는다.
+   마크 SVG는 viewBox 안쪽 여백이 커서(가로 74% · 세로 74%) gap을 작게 잡아야
+   시각 간격이 맞는다. 마크 시각 높이 ≒ 워드마크 캡하이트의 0.9배. */
+.footer-sign {
+  display: flex;
+  align-items: center;
+  gap: 12px;          /* 토큰 외 유추값: 마크 내부 여백을 감안한 시각 간격 */
+  margin-top: 26px;   /* 토큰 외 유추값 */
+  color: var(--ft-text);
+}
+
+.footer-sign-mark {
+  flex: none;
+  display: block;
+  width: 63px;
+  height: 46px;
+}
 
 /* ── 12. 반응형 (720px 브레이크포인트) ───────────── */
+/* 넓은 화면에서는 카피를 두 줄로 — 세 번째 박자만 아래로 내린다 */
+.br-m { display: none; }
+
 @media (max-width: 900px) {
   .tz-cards { grid-template-columns: 1fr 1fr; }
+
+  /* 히어로가 2열을 유지한 채 좁아지는 구간 — 헤드라인을 세 박자 세 줄로 끊는다 */
+  .hero h1 { font-size: 34px; }
+  .br-m { display: revert; }
 }
 
 @media (max-width: 720px) {
@@ -532,10 +730,21 @@ h3 {
   .nav a { padding: 8px 9px; font-size: 14px; }
 
   .btn-toy { display: block; text-align: center; }
+
+  /* L컷 최소 높이 28px 규정 — 모바일 사인오프는 여기까지만 내린다 */
+  .wordmark-type-lg { height: 33px; }
+  .footer-sign-mark { width: 50px; height: 37px; }
+  .footer-sign { gap: 10px; }
+
+  /* 가운뎃점은 항목이 한 줄에 이어질 때만 성립한다 — 줄바꿈이 잦은 폭에서는
+     끝에 점이 매달리므로(예 "815호 ·") 아예 한 줄씩 쌓는다. */
+  .footer-corp .row,
+  .footer-corp .row span { display: block; }
+  .footer-corp .row span:not(:last-child)::after { content: none; }
 }
 
 @media (max-width: 380px) {
-  .wordmark { font-size: 20px; }
+  .wordmark-type { height: 17px; }
   .nav a { padding: 8px 7px; font-size: 13.5px; }
 }
 

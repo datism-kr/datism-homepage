@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Datism — 푸터 카피 · 폰트 · 로고 시안 비교</title>
+
+<!-- 한글 본문 후보 4종 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2.0.5/fonts/variable/woff2/SUIT-Variable.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
+<!-- 로고(라틴) 후보 -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Chakra+Petch:wght@400;500;700&family=Michroma&family=Archivo:wght@400;600;800&family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════════
+   비교 페이지 전용 스타일. 실제 사이트에는 반영되지 않는다.
+   본문 색·여백은 datism-homepage style.css 토큰을 그대로 가져옴.
+   ══════════════════════════════════════════════════════════ */
+:root{
+  --bg:#faf7f0; --card:#fff; --line:#e9e2d4; --text:#45413c; --dim:#9b948a;
+  --coral:#ff8a75; --sky:#79b8e8; --lemon:#ffd056; --mint:#7fd6ae; --grape:#b39ddb;
+  --ink:#1e1c1a;            /* 다크 푸터 바탕 (신규 유추값) */
+  --ink-line:#3a3733;
+  --ink-text:#c9c4bb;
+  --ink-dim:#948d81;        /* #1e1c1a 위 대비 5.17:1 — WCAG AA(4.5) 통과 */
+
+  --f-body:'Pretendard Variable',Pretendard,-apple-system,sans-serif;
+  --f-head:'Pretendard Variable',Pretendard,-apple-system,sans-serif;
+  --f-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --head-w:700;
+  --body-ls:-0.005em;
+  --head-ls:-0.022em;
+}
+[data-font="wanted"]{
+  --f-body:'Wanted Sans Variable','Wanted Sans',sans-serif;
+  --f-head:'Wanted Sans Variable','Wanted Sans',sans-serif;
+  --head-w:700; --head-ls:-0.028em;
+}
+[data-font="suit"]{
+  --f-body:'SUIT Variable',SUIT,sans-serif;
+  --f-head:'SUIT Variable',SUIT,sans-serif;
+  --head-w:800; --head-ls:-0.03em;
+}
+[data-font="plex"]{
+  --f-body:'IBM Plex Sans KR',sans-serif;
+  --f-head:'IBM Plex Sans KR',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,monospace;
+  --head-w:600; --head-ls:-0.012em; --body-ls:0;
+}
+[data-font="current"]{
+  --f-body:'Gowun Dodum','Apple SD Gothic Neo',sans-serif;
+  --f-head:'Jua',sans-serif;
+  --head-w:400; --head-ls:0.01em; --body-ls:0;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--f-body);letter-spacing:var(--body-ls);
+  line-height:1.75;font-size:16px;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--f-head);font-weight:var(--head-w);letter-spacing:var(--head-ls);line-height:1.3;margin:0}
+p{margin:0}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+/* ── 페이지 크롬 ─────────────────────────────── */
+.pagehead{padding:54px 0 26px;border-bottom:1px solid var(--line)}
+.pagehead h1{font-size:34px;margin-bottom:10px}
+.pagehead p{color:var(--dim);font-size:15px;max-width:70ch}
+.kbd{font-family:var(--f-mono);font-size:12.5px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+
+.sec{padding:56px 0 8px}
+.sec-num{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;color:var(--coral);margin-bottom:6px}
+.sec h2{font-size:26px;margin-bottom:8px}
+.sec>.wrap>.sub{color:var(--dim);font-size:14.5px;max-width:74ch;margin-bottom:8px}
+
+/* ── 옵션 카드 헤더 ──────────────────────────── */
+.opt{margin:34px 0 0}
+.opt-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.opt-tag{font-family:var(--f-mono);font-size:12px;font-weight:500;color:#fff;background:var(--text);border-radius:20px;padding:3px 12px;letter-spacing:.04em}
+.opt-tag.rec{background:var(--coral)}
+.opt-name{font-family:var(--f-head);font-weight:var(--head-w);font-size:16px}
+.opt-note{font-size:13px;color:var(--dim)}
+
+/* ══ 푸터 목업 (넥슨 예시 구조: 상단 알림바 → 링크행 → 회사정보 → 로고) ══ */
+.mock{border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 3px 0 rgba(90,80,60,.08)}
+.ft{background:var(--ink);color:var(--ink-text);font-family:var(--f-body);letter-spacing:var(--body-ls)}
+/* 라이트 푸터: --dim(#9b948a)은 흰 바탕에서 3.0:1로 AA 미달 → 푸터 전용으로 어둡게 */
+.ft.light{background:var(--card);color:var(--text);--ink-line:var(--line);--ink-dim:#6f6a62;--ink-text:var(--text)}
+.ft-in{max-width:1000px;margin:0 auto;padding:0 26px}
+
+/* 상단 카피 스트립 */
+.ft-copy{padding:34px 0 26px;border-bottom:1px solid var(--ink-line)}
+.ft-claim{
+  font-family:var(--f-head);font-weight:var(--head-w);letter-spacing:.01em;
+  font-size:19px;color:#fff;margin-bottom:12px;
+}
+.ft.light .ft-claim{color:var(--text)}
+.ft-claim .dot{color:var(--coral)}
+.ft-body{font-size:14px;line-height:1.85;color:var(--ink-dim);max-width:66ch}
+.ft-body strong{color:var(--ink-text);font-weight:600}
+
+/* 링크행 */
+.ft-links{display:flex;flex-wrap:wrap;align-items:center;gap:0 2px;padding:18px 0 4px;font-size:13px}
+.ft-links a{text-decoration:none;color:var(--ink-text);padding:4px 12px 4px 0;position:relative}
+.ft-links a:not(:last-child)::after{content:"";position:absolute;right:5px;top:50%;transform:translateY(-50%);width:1px;height:11px;background:var(--ink-line)}
+.ft-links a:hover{color:#fff}
+.ft.light .ft-links a:hover{color:var(--coral)}
+.ft-links a.em{font-weight:600}
+
+/* 회사정보 */
+.ft-corp{padding:14px 0 30px;font-size:12.5px;line-height:1.9;color:var(--ink-dim)}
+.ft-corp .row{display:flex;flex-wrap:wrap;gap:0 14px}
+.ft-corp .row span{position:relative}
+.ft-corp .row span:not(:last-child)::after{content:"·";position:absolute;right:-9px;opacity:.5}
+.ft-corp .cr{margin-top:8px}
+.ft-mark{display:flex;align-items:center;gap:9px;margin-top:20px;color:var(--ink-text)}
+.ft-mark svg{display:block;flex:none}
+.ft-mark b{font-family:var(--f-head);font-weight:var(--head-w);font-size:17px;letter-spacing:.03em}
+
+/* ══ 폰트 비교 ══ */
+.fontbar{position:sticky;top:0;z-index:9;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:0}
+.fontbar .wrap{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fontbar .lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;color:var(--dim);margin-right:4px}
+.fbtn{
+  font:inherit;font-size:13.5px;cursor:pointer;background:var(--card);color:var(--text);
+  border:1.5px solid var(--line);border-radius:11px;padding:6px 14px;transition:.15s;
+}
+.fbtn:hover{border-color:var(--coral)}
+.fbtn[aria-pressed="true"]{border-color:var(--text);background:var(--text);color:var(--bg)}
+
+.spec-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 28px;margin-top:18px}
+.spec-h1{font-family:var(--f-head);font-weight:var(--head-w);letter-spacing:var(--head-ls);font-size:40px;line-height:1.28;margin-bottom:14px}
+.spec-lead{font-size:15.5px;color:var(--dim);max-width:60ch;margin-bottom:18px}
+.spec-scale>div{margin-bottom:4px;line-height:1.5}
+.s-l{font-family:var(--f-mono);font-size:11px;color:var(--dim);display:inline-block;width:64px}
+.spec-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px 24px;margin-top:20px;padding-top:16px;border-top:1px dashed var(--line);font-size:13px}
+.spec-meta dt{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;color:var(--dim);margin-bottom:1px}
+.spec-meta dd{margin:0}
+.spec-meta code{font-family:var(--f-mono);font-size:11.5px;word-break:break-all}
+.hide{display:none}
+
+/* ══ 로고 ══ */
+.logo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:20px}
+.logo-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.logo-card.pick{border:2px solid var(--coral)}
+.logo-card h4{font-size:15px;margin-bottom:6px}
+.logo-card p{font-size:13.5px;color:var(--dim)}
+.rank{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--coral);margin-bottom:4px}
+
+.lock{display:flex;align-items:center;gap:10px;margin:16px 0 6px}
+.lock svg{flex:none;display:block}
+.lock .wm{font-size:30px;line-height:1;letter-spacing:.02em}
+.lock.sm .wm{font-size:17px}
+.lock.sm svg{width:20px;height:15px}
+.lock-dark{background:var(--ink);color:#fff;border-radius:10px;padding:14px 16px;margin-top:10px}
+.wm-space{font-family:'Space Grotesk',sans-serif;font-weight:700}
+.wm-chakra{font-family:'Chakra Petch',sans-serif;font-weight:700}
+.wm-michroma{font-family:'Michroma',sans-serif;font-weight:400;font-size:24px!important}
+.wm-archivo{font-family:'Archivo',sans-serif;font-weight:800;font-stretch:112%}
+.wm-sora{font-family:'Sora',sans-serif;font-weight:700}
+
+.fam{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:14px}
+.fam h4{font-size:14.5px;margin-bottom:4px}
+.fam .ids{font-family:var(--f-mono);font-size:12px;color:var(--coral);letter-spacing:.06em;margin-bottom:6px}
+.fam p{font-size:13.5px;color:var(--dim)}
+
+footer.pf{margin-top:60px;padding:22px 0 60px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim)}
+
+@media (max-width:720px){
+  .pagehead h1{font-size:26px}
+  .spec-h1{font-size:29px}
+  .ft-in{padding:0 18px}
+}
+</style>
+</head>
+<body>
+
+<div class="pagehead"><div class="wrap">
+  <p style="background:#1e1c1a;color:#c9c4bb;border-radius:12px;padding:14px 18px;font-size:14px;margin-bottom:18px">
+    <b style="color:#fff">확정 (2026-08-05)</b> — 카피 <b style="color:#ff8a75">B안</b>(단, 푸터가 아니라 <b>히어로</b>로 올림) ·
+    폰트 <b style="color:#ff8a75">제목 SUIT ExtraBold + 본문 Pretendard</b> ·
+    로고 <b style="color:#ff8a75">15(소형 S컷) / 06(대형 L컷) 두 벌</b>.
+    아래 §1의 푸터 카피 스트립은 <b>채택되지 않았다</b>(히어로로 이동) — 비교 기록으로만 남긴다.
+    실물 검수는 <span class="kbd" style="background:#2b2825;border-color:#3a3733;color:#c9c4bb">_preview/proof.html</span>,
+    자산 규정은 <span class="kbd" style="background:#2b2825;border-color:#3a3733;color:#c9c4bb">docs/brand_assets.md</span>.
+  </p>
+  <h1>Datism — 푸터 카피 · 폰트 · 로고 시안 비교</h1>
+  <p>실제 <span class="kbd">datism.kr</span> 토큰(색·여백·그림자)을 그대로 쓴 비교 페이지입니다. 이 파일은 <span class="kbd">_preview/</span> 안에 있어 사이트에 노출되지 않습니다. §2의 폰트 버튼을 누르면 <b>이 페이지 전체</b>(위 푸터 목업 포함)의 서체가 즉시 바뀝니다.</p>
+</div></div>
+
+<!-- ═══════════ §1 푸터 카피 ═══════════ -->
+<section class="sec"><div class="wrap">
+  <p class="sec-num">§ 1</p>
+  <h2>회사 소개 카피 — 푸터 5안</h2>
+  <p class="sub">모두 <b>Analyze, Build, Craft.</b>를 세 개의 한국어 동사로 받아내는 구조입니다. 아래로 갈수록 위트 온도가 올라갑니다. 넥슨 푸터 구조(카피 스트립 → 링크행 → 법인정보 → 워드마크)를 따랐습니다.</p>
+</div>
+
+  <div class="wrap">
+  <!-- A -->
+  <div class="opt">
+    <div class="opt-bar"><span class="opt-tag">A</span><span class="opt-name">담백 정공법</span><span class="opt-note">세 동사를 그대로 · 위트 최소 · 가장 안전</span></div>
+    <div class="mock"><div class="ft"><div class="ft-in">
+      <div class="ft-copy">
+        <p class="ft-claim">Analyze, Build, Craft<span class="dot">.</span></p>
+        <p class="ft-body">문제를 끝까지 <strong>뜯어보고</strong>, 필요한 만큼만 <strong>만들고</strong>, 오래 <strong>다듬습니다</strong>. 데이티즘은 서울에서 웹·모바일 소프트웨어를 직접 기획하고 만들어 운영하는 응용 소프트웨어 개발 회사입니다.</p>
+      </div>
+      <div class="ft-links"><a href="#" class="em">회사소개</a><a href="#">제품</a><a href="#">개인정보처리방침</a><a href="#">문의</a></div>
+      <div class="ft-corp">
+        <div class="row"><span>데이티즘 주식회사</span><span>대표 최유리</span><span>서울특별시 서초구 서초대로73길 40, 815호</span></div>
+        <div class="row"><span>사업자등록번호 801-87-02979</span><span>E-mail contact@datism.kr</span></div>
+        <p class="cr">© 2024–2026 Datism Co., Ltd. All rights reserved.</p>
+        <div class="ft-mark"><svg width="25" height="18" viewBox="0 0 173 127" fill="currentColor" aria-hidden="true"><path d="M 50.67 115.33 C50.30,114.97 50.00,108.23 50.00,100.37 C50.00,84.14 49.01,86.31 60.85,76.67 L 67.20 71.50 L 59.44 71.21 C51.98,70.92 51.57,71.02 48.55,73.96 C45.59,76.82 41.00,78.11 41.00,76.08 C41.00,75.58 42.24,74.24 43.75,73.12 L 46.50 71.06 L 43.78 71.03 C42.16,71.01 39.70,72.21 37.65,74.00 C34.42,76.84 31.00,77.96 31.00,76.19 C31.00,75.74 32.35,74.08 34.01,72.49 L 37.02 69.61 L 33.99 66.49 C29.35,61.71 32.53,60.05 37.82,64.50 C39.45,65.88 41.81,67.00 43.05,67.00 C45.18,67.00 45.21,66.89 43.65,65.17 C40.08,61.22 43.66,60.69 48.18,64.50 C50.81,66.71 52.08,67.00 59.16,67.00 L 67.16 67.00 L 61.83 62.14 C58.90,59.46 55.04,56.05 53.25,54.55 L 50.00 51.82 L 50.00 36.91 L 50.00 22.00 L 70.34 22.00 C91.73,22.00 94.76,22.45 104.46,27.06 C115.37,32.25 126.71,47.88 127.80,59.25 L 128.25 64.00 L 123.24 64.00 C118.23,64.00 118.22,63.99 117.53,60.25 C115.69,50.34 108.33,40.83 98.50,35.68 C92.63,32.60 92.16,32.53 76.75,32.18 L 61.00 31.82 L 61.07 44.66 L 61.14 57.50 L 67.03 62.25 L 72.92 67.00 L 108.41 67.00 L 143.90 67.00 L 142.44 63.50 C141.41,61.06 141.32,60.00 142.12,60.00 C143.56,60.00 159.00,68.19 158.99,68.94 C158.98,69.25 155.37,71.44 150.97,73.80 C142.71,78.24 139.80,78.56 142.49,74.71 C143.32,73.53 144.00,72.21 144.00,71.78 C144.00,71.35 128.01,71.00 108.46,71.00 L 72.92 71.00 L 67.03 75.75 L 61.14 80.50 L 61.07 92.75 L 61.00 105.00 L 69.25 105.13 C73.79,105.20 78.85,105.36 80.50,105.49 C85.15,105.84 94.03,104.03 98.32,101.84 C107.16,97.33 114.75,87.97 117.05,78.75 L 118.24 74.00 L 123.12 74.00 C127.41,74.00 128.00,74.25 128.00,76.10 C128.00,83.07 120.97,97.06 114.39,103.18 C109.22,107.98 99.96,112.85 92.96,114.44 C85.96,116.03 52.08,116.75 50.67,115.33 Z"/></svg><b>Datism</b></div>
+      </div>
+    </div></div></div>
+  </div>
+
+  <!-- B -->
+  <div class="opt">
+    <div class="opt-bar"><span class="opt-tag rec">B</span><span class="opt-name">위트 — 추천</span><span class="opt-note">자조 한 스푼 · "사람이 쓴 문장" 신호가 가장 강함</span></div>
+    <div class="mock"><div class="ft"><div class="ft-in">
+      <div class="ft-copy">
+        <p class="ft-claim">Analyze, Build, Craft<span class="dot">.</span></p>
+        <p class="ft-body">먼저 <strong>의심하고</strong>, 그다음 <strong>만들고</strong>, 될 때까지 <strong>붙잡고 있습니다</strong>.<br>기획서를 예쁘게 쓰는 재주는 없어서, 대신 돌아가는 화면을 먼저 보여드립니다.<br>데이티즘은 서울에서 웹·모바일 소프트웨어를 만드는 개발 회사입니다.</p>
+      </div>
+      <div class="ft-links"><a href="#" class="em">회사소개</a><a href="#">제품</a><a href="#">개인정보처리방침</a><a href="#">문의</a></div>
+      <div class="ft-corp">
+        <div class="row"><span>데이티즘 주식회사</span><span>대표 최유리</span><span>서울특별시 서초구 서초대로73길 40, 815호</span></div>
+        <div class="row"><span>사업자등록번호 801-87-02979</span><span>E-mail contact@datism.kr</span></div>
+        <p class="cr">© 2024–2026 Datism Co., Ltd. All rights reserved.</p>
+        <div class="ft-mark"><svg width="25" height="18" viewBox="0 0 173 127" fill="currentColor" aria-hidden="true"><path d="M 50.67 115.33 C50.30,114.97 50.00,108.23 50.00,100.37 C50.00,84.14 49.01,86.31 60.85,76.67 L 67.20 71.50 L 59.44 71.21 C51.98,70.92 51.57,71.02 48.55,73.96 C45.59,76.82 41.00,78.11 41.00,76.08 C41.00,75.58 42.24,74.24 43.75,73.12 L 46.50 71.06 L 43.78 71.03 C42.16,71.01 39.70,72.21 37.65,74.00 C34.42,76.84 31.00,77.96 31.00,76.19 C31.00,75.74 32.35,74.08 34.01,72.49 L 37.02 69.61 L 33.99 66.49 C29.35,61.71 32.53,60.05 37.82,64.50 C39.45,65.88 41.81,67.00 43.05,67.00 C45.18,67.00 45.21,66.89 43.65,65.17 C40.08,61.22 43.66,60.69 48.18,64.50 C50.81,66.71 52.08,67.00 59.16,67.00 L 67.16 67.00 L 61.83 62.14 C58.90,59.46 55.04,56.05 53.25,54.55 L 50.00 51.82 L 50.00 36.91 L 50.00 22.00 L 70.34 22.00 C91.73,22.00 94.76,22.45 104.46,27.06 C115.37,32.25 126.71,47.88 127.80,59.25 L 128.25 64.00 L 123.24 64.00 C118.23,64.00 118.22,63.99 117.53,60.25 C115.69,50.34 108.33,40.83 98.50,35.68 C92.63,32.60 92.16,32.53 76.75,32.18 L 61.00 31.82 L 61.07 44.66 L 61.14 57.50 L 67.03 62.25 L 72.92 67.00 L 108.41 67.00 L 143.90 67.00 L 142.44 63.50 C141.41,61.06 141.32,60.00 142.12,60.00 C143.56,60.00 159.00,68.19 158.99,68.94 C158.98,69.25 155.37,71.44 150.97,73.80 C142.71,78.24 139.80,78.56 142.49,74.71 C143.32,73.53 144.00,72.21 144.00,71.78 C144.00,71.35 128.01,71.00 108.46,71.00 L 72.92 71.00 L 67.03 75.75 L 61.14 80.50 L 61.07 92.75 L 61.00 105.00 L 69.25 105.13 C73.79,105.20 78.85,105.36 80.50,105.49 C85.15,105.84 94.03,104.03 98.32,101.84 C107.16,97.33 114.75,87.97 117.05,78.75 L 118.24 74.00 L 123.12 74.00 C127.41,74.00 128.00,74.25 128.00,76.10 C128.00,83.07 120.97,97.06 114.39,103.18 C109.22,107.98 99.96,112.85 92.96,114.44 C85.96,116.03 52.08,116.75 50.67,115.33 Z"/></svg><b>Datism</b></div>
+      </div>
+    </div></div></div>
+  </div>
+
+  <!-- C -->
+  <div class="opt">
+    <div class="opt-bar"><span class="opt-tag">C</span><span class="opt-name">세 박자 — 대구(對句)</span><span class="opt-note">리듬으로 읽히는 문장 · 낭독하면 가장 좋음</span></div>
+    <div class="mock"><div class="ft"><div class="ft-in">
+      <div class="ft-copy">
+        <p class="ft-claim">Analyze, Build, Craft<span class="dot">.</span></p>
+        <p class="ft-body"><strong>분석은 의심에서, 구현은 손에서, 완성은 고집에서</strong> 나옵니다.<br>데이티즘이 소프트웨어를 만드는 세 박자입니다. 서울에서 웹과 모바일 제품을 기획부터 운영까지 한 팀이 맡습니다.</p>
+      </div>
+      <div class="ft-links"><a href="#" class="em">회사소개</a><a href="#">제품</a><a href="#">개인정보처리방침</a><a href="#">문의</a></div>
+      <div class="ft-corp">
+        <div class="row"><span>데이티즘 주식회사</span><span>대표 최유리</span><span>서울특별시 서초구 서초대로73길 40, 815호</span></div>
+        <div class="row"><span>사업자등록번호 801-87-02979</span><span>E-mail contact@datism.kr</span></div>
+        <p class="cr">© 2024–2026 Datism Co., Ltd. All rights reserved.</p>
+        <div class="ft-mark"><svg width="25" height="18" viewBox="0 0 173 127" fill="currentColor" aria-hidden="true"><path d="M 50.67 115.33 C50.30,114.97 50.00,108.23 50.00,100.37 C50.00,84.14 49.01,86.31 60.85,76.67 L 67.20 71.50 L 59.44 71.21 C51.98,70.92 51.57,71.02 48.55,73.96 C45.59,76.82 41.00,78.11 41.00,76.08 C41.00,75.58 42.24,74.24 43.75,73.12 L 46.50 71.06 L 43.78 71.03 C42.16,71.01 39.70,72.21 37.65,74.00 C34.42,76.84 31.00,77.96 31.00,76.19 C31.00,75.74 32.35,74.08 34.01,72.49 L 37.02 69.61 L 33.99 66.49 C29.35,61.71 32.53,60.05 37.82,64.50 C39.45,65.88 41.81,67.00 43.05,67.00 C45.18,67.00 45.21,66.89 43.65,65.17 C40.08,61.22 43.66,60.69 48.18,64.50 C50.81,66.71 52.08,67.00 59.16,67.00 L 67.16 67.00 L 61.83 62.14 C58.90,59.46 55.04,56.05 53.25,54.55 L 50.00 51.82 L 50.00 36.91 L 50.00 22.00 L 70.34 22.00 C91.73,22.00 94.76,22.45 104.46,27.06 C115.37,32.25 126.71,47.88 127.80,59.25 L 128.25 64.00 L 123.24 64.00 C118.23,64.00 118.22,63.99 117.53,60.25 C115.69,50.34 108.33,40.83 98.50,35.68 C92.63,32.60 92.16,32.53 76.75,32.18 L 61.00 31.82 L 61.07 44.66 L 61.14 57.50 L 67.03 62.25 L 72.92 67.00 L 108.41 67.00 L 143.90 67.00 L 142.44 63.50 C141.41,61.06 141.32,60.00 142.12,60.00 C143.56,60.00 159.00,68.19 158.99,68.94 C158.98,69.25 155.37,71.44 150.97,73.80 C142.71,78.24 139.80,78.56 142.49,74.71 C143.32,73.53 144.00,72.21 144.00,71.78 C144.00,71.35 128.01,71.00 108.46,71.00 L 72.92 71.00 L 67.03 75.75 L 61.14 80.50 L 61.07 92.75 L 61.00 105.00 L 69.25 105.13 C73.79,105.20 78.85,105.36 80.50,105.49 C85.15,105.84 94.03,104.03 98.32,101.84 C107.16,97.33 114.75,87.97 117.05,78.75 L 118.24 74.00 L 123.12 74.00 C127.41,74.00 128.00,74.25 128.00,76.10 C128.00,83.07 120.97,97.06 114.39,103.18 C109.22,107.98 99.96,112.85 92.96,114.44 C85.96,116.03 52.08,116.75 50.67,115.33 Z"/></svg><b>Datism</b></div>
+      </div>
+    </div></div></div>
+  </div>
+
+  <!-- D -->
+  <div class="opt">
+    <div class="opt-bar"><span class="opt-tag">D</span><span class="opt-name">자체 프로덕트 선언</span><span class="opt-note">"수주사가 아니다"를 분명히 · 채용·투자 문맥에 유리</span></div>
+    <div class="mock"><div class="ft"><div class="ft-in">
+      <div class="ft-copy">
+        <p class="ft-claim">Analyze, Build, Craft<span class="dot">.</span></p>
+        <p class="ft-body">시킨 것보다 <strong>우리가 갖고 싶은 것</strong>을 먼저 만듭니다.<br>뜯어보고, 만들고, 다듬는 일이 전부 같은 책상에서 벌어집니다. 그래서 빠르고, 그래서 끝까지 우리 책임입니다. 데이티즘은 자체 프로덕트를 만드는 응용 소프트웨어 개발 회사입니다.</p>
+      </div>
+      <div class="ft-links"><a href="#" class="em">회사소개</a><a href="#">제품</a><a href="#">개인정보처리방침</a><a href="#">문의</a></div>
+      <div class="ft-corp">
+        <div class="row"><span>데이티즘 주식회사</span><span>대표 최유리</span><span>서울특별시 서초구 서초대로73길 40, 815호</span></div>
+        <div class="row"><span>사업자등록번호 801-87-02979</span><span>E-mail contact@datism.kr</span></div>
+        <p class="cr">© 2024–2026 Datism Co., Ltd. All rights reserved.</p>
+        <div class="ft-mark"><svg width="25" height="18" viewBox="0 0 173 127" fill="currentColor" aria-hidden="true"><path d="M 50.67 115.33 C50.30,114.97 50.00,108.23 50.00,100.37 C50.00,84.14 49.01,86.31 60.85,76.67 L 67.20 71.50 L 59.44 71.21 C51.98,70.92 51.57,71.02 48.55,73.96 C45.59,76.82 41.00,78.11 41.00,76.08 C41.00,75.58 42.24,74.24 43.75,73.12 L 46.50 71.06 L 43.78 71.03 C42.16,71.01 39.70,72.21 37.65,74.00 C34.42,76.84 31.00,77.96 31.00,76.19 C31.00,75.74 32.35,74.08 34.01,72.49 L 37.02 69.61 L 33.99 66.49 C29.35,61.71 32.53,60.05 37.82,64.50 C39.45,65.88 41.81,67.00 43.05,67.00 C45.18,67.00 45.21,66.89 43.65,65.17 C40.08,61.22 43.66,60.69 48.18,64.50 C50.81,66.71 52.08,67.00 59.16,67.00 L 67.16 67.00 L 61.83 62.14 C58.90,59.46 55.04,56.05 53.25,54.55 L 50.00 51.82 L 50.00 36.91 L 50.00 22.00 L 70.34 22.00 C91.73,22.00 94.76,22.45 104.46,27.06 C115.37,32.25 126.71,47.88 127.80,59.25 L 128.25 64.00 L 123.24 64.00 C118.23,64.00 118.22,63.99 117.53,60.25 C115.69,50.34 108.33,40.83 98.50,35.68 C92.63,32.60 92.16,32.53 76.75,32.18 L 61.00 31.82 L 61.07 44.66 L 61.14 57.50 L 67.03 62.25 L 72.92 67.00 L 108.41 67.00 L 143.90 67.00 L 142.44 63.50 C141.41,61.06 141.32,60.00 142.12,60.00 C143.56,60.00 159.00,68.19 158.99,68.94 C158.98,69.25 155.37,71.44 150.97,73.80 C142.71,78.24 139.80,78.56 142.49,74.71 C143.32,73.53 144.00,72.21 144.00,71.78 C144.00,71.35 128.01,71.00 108.46,71.00 L 72.92 71.00 L 67.03 75.75 L 61.14 80.50 L 61.07 92.75 L 61.00 105.00 L 69.25 105.13 C73.79,105.20 78.85,105.36 80.50,105.49 C85.15,105.84 94.03,104.03 98.32,101.84 C107.16,97.33 114.75,87.97 117.05,78.75 L 118.24 74.00 L 123.12 74.00 C127.41,74.00 128.00,74.25 128.00,76.10 C128.00,83.07 120.97,97.06 114.39,103.18 C109.22,107.98 99.96,112.85 92.96,114.44 C85.96,116.03 52.08,116.75 50.67,115.33 Z"/></svg><b>Datism</b></div>
+      </div>
+    </div></div></div>
+  </div>
+
+  <!-- E -->
+  <div class="opt">
+    <div class="opt-bar"><span class="opt-tag">E</span><span class="opt-name">미니멀 (라이트 푸터)</span><span class="opt-note">두 줄로 끝 · 밝은 바탕 버전 · 카피보다 제품을 앞세우고 싶을 때</span></div>
+    <div class="mock"><div class="ft light"><div class="ft-in">
+      <div class="ft-copy">
+        <p class="ft-claim">Analyze, Build, Craft<span class="dot">.</span></p>
+        <p class="ft-body">뜯어보고, 만들고, 다듬습니다. 그 사이에 회의는 되도록 적게 넣습니다.<br>데이티즘 — 서울에서 작고 단단한 소프트웨어를 만듭니다.</p>
+      </div>
+      <div class="ft-links"><a href="#" class="em">회사소개</a><a href="#">제품</a><a href="#">개인정보처리방침</a><a href="#">문의</a></div>
+      <div class="ft-corp">
+        <div class="row"><span>데이티즘 주식회사</span><span>대표 최유리</span><span>서울특별시 서초구 서초대로73길 40, 815호</span></div>
+        <div class="row"><span>사업자등록번호 801-87-02979</span><span>E-mail contact@datism.kr</span></div>
+        <p class="cr">© 2024–2026 Datism Co., Ltd. All rights reserved.</p>
+        <div class="ft-mark"><svg width="25" height="18" viewBox="0 0 173 127" fill="currentColor" aria-hidden="true"><path d="M 50.67 115.33 C50.30,114.97 50.00,108.23 50.00,100.37 C50.00,84.14 49.01,86.31 60.85,76.67 L 67.20 71.50 L 59.44 71.21 C51.98,70.92 51.57,71.02 48.55,73.96 C45.59,76.82 41.00,78.11 41.00,76.08 C41.00,75.58 42.24,74.24 43.75,73.12 L 46.50 71.06 L 43.78 71.03 C42.16,71.01 39.70,72.21 37.65,74.00 C34.42,76.84 31.00,77.96 31.00,76.19 C31.00,75.74 32.35,74.08 34.01,72.49 L 37.02 69.61 L 33.99 66.49 C29.35,61.71 32.53,60.05 37.82,64.50 C39.45,65.88 41.81,67.00 43.05,67.00 C45.18,67.00 45.21,66.89 43.65,65.17 C40.08,61.22 43.66,60.69 48.18,64.50 C50.81,66.71 52.08,67.00 59.16,67.00 L 67.16 67.00 L 61.83 62.14 C58.90,59.46 55.04,56.05 53.25,54.55 L 50.00 51.82 L 50.00 36.91 L 50.00 22.00 L 70.34 22.00 C91.73,22.00 94.76,22.45 104.46,27.06 C115.37,32.25 126.71,47.88 127.80,59.25 L 128.25 64.00 L 123.24 64.00 C118.23,64.00 118.22,63.99 117.53,60.25 C115.69,50.34 108.33,40.83 98.50,35.68 C92.63,32.60 92.16,32.53 76.75,32.18 L 61.00 31.82 L 61.07 44.66 L 61.14 57.50 L 67.03 62.25 L 72.92 67.00 L 108.41 67.00 L 143.90 67.00 L 142.44 63.50 C141.41,61.06 141.32,60.00 142.12,60.00 C143.56,60.00 159.00,68.19 158.99,68.94 C158.98,69.25 155.37,71.44 150.97,73.80 C142.71,78.24 139.80,78.56 142.49,74.71 C143.32,73.53 144.00,72.21 144.00,71.78 C144.00,71.35 128.01,71.00 108.46,71.00 L 72.92 71.00 L 67.03 75.75 L 61.14 80.50 L 61.07 92.75 L 61.00 105.00 L 69.25 105.13 C73.79,105.20 78.85,105.36 80.50,105.49 C85.15,105.84 94.03,104.03 98.32,101.84 C107.16,97.33 114.75,87.97 117.05,78.75 L 118.24 74.00 L 123.12 74.00 C127.41,74.00 128.00,74.25 128.00,76.10 C128.00,83.07 120.97,97.06 114.39,103.18 C109.22,107.98 99.96,112.85 92.96,114.44 C85.96,116.03 52.08,116.75 50.67,115.33 Z"/></svg><b>Datism</b></div>
+      </div>
+    </div></div></div>
+  </div>
+  </div>
+</section>
+
+<!-- ═══════════ §2 폰트 ═══════════ -->
+<section class="sec"><div class="wrap">
+  <p class="sec-num">§ 2</p>
+  <h2>본문 서체 — 4안 (전부 상업적 사용 무료)</h2>
+  <p class="sub">현재 Jua(제목)+Gowun Dodum(본문)은 둥근 손글씨 계열이라 "응용 소프트웨어 개발 회사"의 톤과 어긋납니다. 아래 4종은 모두 <b>SIL Open Font License</b> 또는 그에 준하는 라이선스로 웹·앱·인쇄·임베딩·수정까지 무료입니다.</p>
+</div></section>
+
+<div class="fontbar"><div class="wrap">
+  <span class="lbl">FONT</span>
+  <button class="fbtn" data-f="pretendard" aria-pressed="true">① Pretendard</button>
+  <button class="fbtn" data-f="wanted" aria-pressed="false">② Wanted Sans</button>
+  <button class="fbtn" data-f="suit" aria-pressed="false">③ SUIT</button>
+  <button class="fbtn" data-f="plex" aria-pressed="false">④ IBM Plex Sans KR</button>
+  <button class="fbtn" data-f="current" aria-pressed="false">현재 (Jua+Gowun)</button>
+</div></div>
+
+<div class="wrap">
+  <div class="spec-card">
+    <p class="spec-h1">쓸모 있는 소프트웨어를<br>작고 단단하게 만듭니다</p>
+    <p class="spec-lead">데이티즘은 서울에 자리한 응용 소프트웨어 개발 회사입니다. 기획부터 설계·구현·운영까지 한 팀에서 맡아, 웹과 모바일에서 바로 실행되는 제품을 직접 만들어 내놓습니다.</p>
+    <div class="spec-scale">
+      <div><span class="s-l">44 / head</span> <span style="font-family:var(--f-head);font-weight:var(--head-w);font-size:34px;letter-spacing:var(--head-ls)">탐사대 Z — Datism</span></div>
+      <div><span class="s-l">20 / head</span> <span style="font-family:var(--f-head);font-weight:var(--head-w);font-size:20px;letter-spacing:var(--head-ls)">스탯과 선택지로 갈라지는 수사</span></div>
+      <div><span class="s-l">15 / body</span> <span style="font-size:15px">사업자등록번호 801-87-02979 · 서초대로73길 40, 815호</span></div>
+      <div><span class="s-l">12.5 / cap</span> <span style="font-size:12.5px">© 2024–2026 Datism Co., Ltd. All rights reserved.</span></div>
+      <div><span class="s-l">Latin</span> <span style="font-size:19px">Analyze, Build, Craft. — Datism Co., Ltd. 0123456789</span></div>
+    </div>
+
+    <dl class="spec-meta" data-meta="pretendard">
+      <div><dt>이름</dt><dd>Pretendard (오리온 · orioncactus)</dd></div>
+      <div><dt>라이선스</dt><dd>SIL OFL 1.1 — 상업적 사용·수정·임베딩 자유</dd></div>
+      <div><dt>성격</dt><dd>중립 그로테스크. macOS/iOS의 시스템 서체 감각을 웹에 옮긴 사실상 한국 표준</dd></div>
+      <div><dt>강점</dt><dd>한글·라틴 메트릭이 통일돼 영문 카피(Analyze, Build, Craft)와 한글이 같은 선상에 앉음. 9종 웨이트</dd></div>
+      <div><dt>약점</dt><dd>너무 흔함 — 브랜드 개성은 로고·색이 져야 함</dd></div>
+      <div><dt>CDN</dt><dd><code>cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/…/pretendardvariable-dynamic-subset.css</code></dd></div>
+    </dl>
+    <dl class="spec-meta hide" data-meta="wanted">
+      <div><dt>이름</dt><dd>Wanted Sans (원티드랩)</dd></div>
+      <div><dt>라이선스</dt><dd>SIL OFL 1.1</dd></div>
+      <div><dt>성격</dt><dd>지오메트릭 계열. 자간이 살짝 조이고 종결부가 반듯해 "제품 회사" 인상이 강함</dd></div>
+      <div><dt>강점</dt><dd>Pretendard보다 개성이 한 단계 위인데 여전히 진지함. 2024~26 국내 스타트업 사이트에서 가장 많이 채택된 대안</dd></div>
+      <div><dt>약점</dt><dd>장문 가독은 Pretendard가 약간 우세. 작은 크기에서 자간 조임이 눈에 띔</dd></div>
+      <div><dt>CDN</dt><dd><code>cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/…/WantedSansVariable.css</code></dd></div>
+    </dl>
+    <dl class="spec-meta hide" data-meta="suit">
+      <div><dt>이름</dt><dd>SUIT (선타이포 · sun-typeface)</dd></div>
+      <div><dt>라이선스</dt><dd>SIL OFL 1.1</dd></div>
+      <div><dt>성격</dt><dd>기하학적이고 각이 선 산세리프. 굵은 웨이트에서 특히 단단함</dd></div>
+      <div><dt>강점</dt><dd>큰 헤드라인이 강하게 서서 히어로 카피에 유리. 로고 워드마크와 톤이 잘 맞음</dd></div>
+      <div><dt>약점</dt><dd>본문 15px 이하에서 다소 딱딱함 — 본문은 Pretendard, 제목만 SUIT로 섞는 편성도 가능</dd></div>
+      <div><dt>CDN</dt><dd><code>cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT.css</code></dd></div>
+    </dl>
+    <dl class="spec-meta hide" data-meta="plex">
+      <div><dt>이름</dt><dd>IBM Plex Sans KR (+ Plex Mono)</dd></div>
+      <div><dt>라이선스</dt><dd>SIL OFL 1.1 · Google Fonts 정식 배포</dd></div>
+      <div><dt>성격</dt><dd>엔지니어링 서체. 라틴 Plex Sans와 한글이 한 가족이라 국·영문 혼용이 자연스러움</dd></div>
+      <div><dt>강점</dt><dd>"소프트웨어 회사"라는 정체성을 서체 자체가 말해줌. 같은 가족의 Plex Mono를 라벨·수치(사업자번호·버전·§표기)에 쓰면 문서 질감이 살아남</dd></div>
+      <div><dt>약점</dt><dd>한글 자족(字族)이 넷 중 가장 서구적 — 따뜻한 크림 팔레트와는 살짝 건조하게 붙음</dd></div>
+      <div><dt>CDN</dt><dd><code>fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300..700</code></dd></div>
+    </dl>
+    <dl class="spec-meta hide" data-meta="current">
+      <div><dt>이름</dt><dd>현재 — Jua(제목) + Gowun Dodum(본문)</dd></div>
+      <div><dt>라이선스</dt><dd>SIL OFL 1.1</dd></div>
+      <div><dt>문제</dt><dd>둥근 손글씨 계열. 게임 UI에는 맞지만 법인 정보·사업자번호가 놓이는 푸터에서 신뢰 신호가 약함</dd></div>
+      <div><dt>비교 지점</dt><dd>사업자등록번호 줄과 주소 줄을 위 4안과 번갈아 보면 차이가 가장 크게 벌어짐</dd></div>
+    </dl>
+  </div>
+
+  <div class="opt" style="margin-top:26px">
+    <div class="opt-bar"><span class="opt-tag rec">편성</span><span class="opt-name">추천 조합</span></div>
+    <div class="fam">
+      <p class="ids">1순위 · 안전</p>
+      <h4>Pretendard 단일</h4>
+      <p>제목 Bold(700)/본문 Regular(400)/캡션 Regular. 서체로 튀지 않고 로고·코랄 포인트가 브랜드를 지게 하는 편성. 실패 확률이 가장 낮습니다.</p>
+    </div>
+    <div class="fam">
+      <p class="ids">2순위 · 개성</p>
+      <h4>제목 SUIT ExtraBold + 본문 Pretendard</h4>
+      <p>히어로 헤드라인만 각지게 세우고 본문은 중립으로 읽힙니다. 아래 로고 추천안(각진 지오메트릭 워드마크)과 결이 가장 잘 맞습니다.</p>
+    </div>
+    <div class="fam">
+      <p class="ids">3순위 · 정체성</p>
+      <h4>IBM Plex Sans KR + Plex Mono</h4>
+      <p>Mono를 <span class="kbd">§ / 사업자등록번호 / 버전</span> 같은 라벨에만 소면적으로 씁니다. "개발 회사"라는 사실을 서체가 대신 말해주지만, 크림 팔레트를 조금 더 뉴트럴하게 조정하는 편이 좋습니다.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ §3 로고 ═══════════ -->
+<section class="sec"><div class="wrap">
+  <p class="sec-num">§ 3</p>
+  <h2>텍스트 로고 15안 — 계열 분류와 추천</h2>
+  <p class="sub">확정 마크가 <b>D를 관통하는 화살</b>이므로, 워드마크 판단 기준은 단 하나입니다 — <b>화살(삼각/예각) 모티프를 글자가 되받는가</b>. 이 기준으로 15안은 네 계열로 갈립니다.</p>
+</div>
+
+<div class="wrap">
+  <div class="fam">
+    <p class="ids">01 · 02 · 06 · 15  (+ 03)</p>
+    <h4>화살-A 계열 — A의 정점이 삼각 노치/화살촉</h4>
+    <p>마크의 화살이 글자 안에서 한 번 더 반복됩니다. 로고를 두 번 볼 이유를 만들어 주는 유일한 계열 — <b>이 계열 안에서 고르는 것이 맞습니다.</b></p>
+  </div>
+  <div class="fam">
+    <p class="ids">04 · 05 · 07 · 09 · 11 · 13</p>
+    <h4>평범한 지오메트릭 계열</h4>
+    <p>안정적이지만 마크를 떼면 아무 회사 이름이나 될 수 있습니다. 09·11은 특히 일반 그로테스크에 가까워 개성 신호가 없습니다.</p>
+  </div>
+  <div class="fam">
+    <p class="ids">08 · 10</p>
+    <h4>경량 와이드 계열</h4>
+    <p>고급스럽지만 <b>파비콘·앱 아이콘·모바일 상단바에서 무너집니다</b>. 데이티즘 로고는 22px 상단바에서 살아야 하므로 주 워드마크로는 부적합 — OG 이미지·명함 같은 대형 용도 한정.</p>
+  </div>
+  <div class="fam">
+    <p class="ids">12 · 14</p>
+    <h4>변칙 계열</h4>
+    <p>12(이탤릭)는 속도감이 있지만 "Analyze, Build, Craft"의 침착한 톤과 어긋납니다. 14는 I의 슬래시가 <b>1·l과 혼동</b>될 여지가 있어 가독 위험이 있습니다.</p>
+  </div>
+
+  <div class="logo-grid">
+    <div class="logo-card pick">
+      <p class="rank">1순위 · 주 워드마크</p>
+      <h4>15 — 볼드 + 넓은 자폭 + 화살-A</h4>
+      <p>화살 모티프를 가지면서도 획이 두꺼워 22px 상단바와 파비콘에서 형태가 유지됩니다. 넷 중 유일하게 <b>큰 크기와 작은 크기를 동시에</b> 버팁니다. 아래는 마크와 묶은 록업 근사(Space Grotesk Bold + 삼각 A).</p>
+      <div class="lock">
+        <svg width="34" height="25" viewBox="0 0 173 127" fill="currentColor" aria-hidden="true"><path d="M 50.67 115.33 C50.30,114.97 50.00,108.23 50.00,100.37 C50.00,84.14 49.01,86.31 60.85,76.67 L 67.20 71.50 L 59.44 71.21 C51.98,70.92 51.57,71.02 48.55,73.96 C45.59,76.82 41.00,78.11 41.00,76.08 C41.00,75.58 42.24,74.24 43.75,73.12 L 46.50 71.06 L 43.78 71.03 C42.16,71.01 39.70,72.21 37.65,74.00 C34.42,76.84 31.00,77.96 31.00,76.19 C31.00,75.74 32.35,74.08 34.01,72.49 L 37.02 69.61 L 33.99 66.49 C29.35,61.71 32.53,60.05 37.82,64.50 C39.45,65.88 41.81,67.00 43.05,67.00 C45.18,67.00 45.21,66.89 43.65,65.17 C40.08,61.22 43.66,60.69 48.18,64.50 C50.81,66.71 52.08,67.00 59.16,67.00 L 67.16 67.00 L 61.83 62.14 C58.90,59.46 55.04,56.05 53.25,54.55 L 50.00 51.82 L 50.00 36.91 L 50.00 22.00 L 70.34 22.00 C91.73,22.00 94.76,22.45 104.46,27.06 C115.37,32.25 126.71,47.88 127.80,59.25 L 128.25 64.00 L 123.24 64.00 C118.23,64.00 118.22,63.99 117.53,60.25 C115.69,50.34 108.33,40.83 98.50,35.68 C92.63,32.60 92.16,32.53 76.75,32.18 L 61.00 31.82 L 61.07 44.66 L 61.14 57.50 L 67.03 62.25 L 72.92 67.00 L 108.41 67.00 L 143.90 67.00 L 142.44 63.50 C141.41,61.06 141.32,60.00 142.12,60.00 C143.56,60.00 159.00,68.19 158.99,68.94 C158.98,69.25 155.37,71.44 150.97,73.80 C142.71,78.24 139.80,78.56 142.49,74.71 C143.32,73.53 144.00,72.21 144.00,71.78 C144.00,71.35 128.01,71.00 108.46,71.00 L 72.92 71.00 L 67.03 75.75 L 61.14 80.50 L 61.07 92.75 L 61.00 105.00 L 69.25 105.13 C73.79,105.20 78.85,105.36 80.50,105.49 C85.15,105.84 94.03,104.03 98.32,101.84 C107.16,97.33 114.75,87.97 117.05,78.75 L 118.24 74.00 L 123.12 74.00 C127.41,74.00 128.00,74.25 128.00,76.10 C128.00,83.07 120.97,97.06 114.39,103.18 C109.22,107.98 99.96,112.85 92.96,114.44 C85.96,116.03 52.08,116.75 50.67,115.33 Z"/></svg>
+        <span class="wm wm-space">DATISM</span>
+      </div>
+      <div class="lock sm">
+        <svg viewBox="0 0 173 127" fill="currentColor" aria-hidden="true"><path d="M 50.67 115.33 C50.30,114.97 50.00,108.23 50.00,100.37 C50.00,84.14 49.01,86.31 60.85,76.67 L 67.20 71.50 L 59.44 71.21 C51.98,70.92 51.57,71.02 48.55,73.96 C45.59,76.82 41.00,78.11 41.00,76.08 C41.00,75.58 42.24,74.24 43.75,73.12 L 46.50 71.06 L 43.78 71.03 C42.16,71.01 39.70,72.21 37.65,74.00 C34.42,76.84 31.00,77.96 31.00,76.19 C31.00,75.74 32.35,74.08 34.01,72.49 L 37.02 69.61 L 33.99 66.49 C29.35,61.71 32.53,60.05 37.82,64.50 C39.45,65.88 41.81,67.00 43.05,67.00 C45.18,67.00 45.21,66.89 43.65,65.17 C40.08,61.22 43.66,60.69 48.18,64.50 C50.81,66.71 52.08,67.00 59.16,67.00 L 67.16 67.00 L 61.83 62.14 C58.90,59.46 55.04,56.05 53.25,54.55 L 50.00 51.82 L 50.00 36.91 L 50.00 22.00 L 70.34 22.00 C91.73,22.00 94.76,22.45 104.46,27.06 C115.37,32.25 126.71,47.88 127.80,59.25 L 128.25 64.00 L 123.24 64.00 C118.23,64.00 118.22,63.99 117.53,60.25 C115.69,50.34 108.33,40.83 98.50,35.68 C92.63,32.60 92.16,32.53 76.75,32.18 L 61.00 31.82 L 61.07 44.66 L 61.14 57.50 L 67.03 62.25 L 72.92 67.00 L 108.41 67.00 L 143.90 67.00 L 142.44 63.50 C141.41,61.06 141.32,60.00 142.12,60.00 C143.56,60.00 159.00,68.19 158.99,68.94 C158.98,69.25 155.37,71.44 150.97,73.80 C142.71,78.24 139.80,78.56 142.49,74.71 C143.32,73.53 144.00,72.21 144.00,71.78 C144.00,71.35 128.01,71.00 108.46,71.00 L 72.92 71.00 L 67.03 75.75 L 61.14 80.50 L 61.07 92.75 L 61.00 105.00 L 69.25 105.13 C73.79,105.20 78.85,105.36 80.50,105.49 C85.15,105.84 94.03,104.03 98.32,101.84 C107.16,97.33 114.75,87.97 117.05,78.75 L 118.24 74.00 L 123.12 74.00 C127.41,74.00 128.00,74.25 128.00,76.10 C128.00,83.07 120.97,97.06 114.39,103.18 C109.22,107.98 99.96,112.85 92.96,114.44 C85.96,116.03 52.08,116.75 50.67,115.33 Z"/></svg>
+        <span class="wm wm-space">DATISM</span>
+        <span style="font-size:11px;color:var(--dim);font-family:var(--f-mono)">← 상단바 실제 크기</span>
+      </div>
+      <div class="lock lock-dark"><span class="wm wm-space">DATISM</span></div>
+    </div>
+
+    <div class="logo-card">
+      <p class="rank">2순위 · 대형/여백 용도</p>
+      <h4>06 — 라이트 + 화살-A</h4>
+      <p>같은 화살-A인데 획이 얇아 히어로·OG 이미지·명함처럼 <b>크게 놓이는 자리</b>에서 15보다 세련됩니다. 단, 상단바 22px에서는 화살 노치가 사라집니다 — 15와 <b>두 벌 운용</b>(대형=06, 소형=15)을 권합니다.</p>
+      <div class="lock"><span class="wm" style="font-family:'Space Grotesk',sans-serif;font-weight:400;letter-spacing:.16em">DATISM</span></div>
+    </div>
+
+    <div class="logo-card">
+      <p class="rank">3순위 · 아이콘 록업</p>
+      <h4>01 — 헤비 + 좁은 자폭 + 화살-A</h4>
+      <p>가장 압축이 강해 <b>앱 아이콘·파비콘·스토어 배너</b>처럼 폭이 없는 자리에 적합합니다. 다만 본문 페이지에서 단독으로 쓰면 다소 공격적입니다.</p>
+      <div class="lock"><span class="wm wm-archivo" style="letter-spacing:-.01em">DATISM</span></div>
+    </div>
+
+    <div class="logo-card">
+      <p class="rank">보류</p>
+      <h4>14 — I의 슬래시</h4>
+      <p>아이디어는 좋지만 <b>DAT1SM / DATlSM</b>으로 오독될 여지가 있습니다. 회사명이 아직 낮은 인지도일 때 글자를 흐리는 장치는 손해입니다. 인지도가 오른 뒤 서브 마크로 재검토.</p>
+      <div class="lock"><span class="wm wm-chakra">DAT<span style="opacity:.45">I</span>SM</span></div>
+    </div>
+  </div>
+
+  <div class="fam" style="margin-top:18px">
+    <p class="ids">한 가지 더</p>
+    <h4>워드마크 서체는 본문 서체와 달라야 합니다</h4>
+    <p>현재 상단바 워드마크가 본문과 같은 <b>Jua</b>라서 로고가 "제목 글자"로만 보입니다. 15안 중 무엇을 고르든 워드마크는 <b>아웃라인(SVG path)으로 고정</b>해 두는 것이 맞습니다 — 폰트 로딩 실패·자간 미세차·OS별 렌더링 차이에서 자유로워집니다. 위 록업은 웹폰트 근사치일 뿐이고, 최종본은 선택안을 SVG로 떠서 <span class="kbd">assets/wordmark.svg</span>로 두는 것을 권합니다.</p>
+  </div>
+</div>
+</section>
+
+<footer class="pf"><div class="wrap">
+  <p>Datism 시안 비교 페이지 · <span class="kbd">_preview/options.html</span> · 사이트 본문에는 링크되지 않습니다.</p>
+</div></footer>
+
+<script>
+document.querySelectorAll('.fbtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var f = b.dataset.f;
+    document.documentElement.setAttribute('data-font', f);
+    document.querySelectorAll('.fbtn').forEach(function(x){ x.setAttribute('aria-pressed', String(x === b)); });
+    document.querySelectorAll('[data-meta]').forEach(function(m){ m.classList.toggle('hide', m.dataset.meta !== f); });
+  });
+});
+document.documentElement.setAttribute('data-font','pretendard');
+</script>
+
+</body>
+</html>
