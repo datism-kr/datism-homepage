@@ -377,6 +377,41 @@ h3 {
   font-size: 14px;
 }
 
+/* 1열 변형 — 연혁 등 (기존 .spec 점선 문법 재사용) */
+.spec-1 {
+  grid-template-columns: 1fr;
+  max-width: 520px;   /* 토큰 외 유추값: 1열 표는 좁게 */
+}
+
+.history-title {
+  margin-top: 26px;   /* 토큰 외 유추값: tz-cards 상단 여백과 동일한 리듬 */
+}
+
+/* ── 9-1. 개발 스크린샷 갤러리 ───────────────────── */
+.shots {
+  margin: 26px 0 0;
+}
+
+.shots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.shots-grid img {
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  background: var(--card);
+  height: auto;
+}
+
+.shots figcaption {
+  margin-top: 10px;   /* 토큰 외 유추값 */
+  font-size: 12.5px;
+  color: var(--dim);
+}
+
 /* ── 10. 문의 ────────────────────────────────────── */
 .contact-card {
   margin-top: 18px;
@@ -398,6 +433,39 @@ h3 {
 
 .contact-mail a { color: var(--sky); }
 
+/* ── 10-1. 문서형 페이지 (개인정보처리방침 등) ───── */
+.doc-title {
+  font-size: 28px;
+  margin: 0 0 18px;
+}
+
+.doc {
+  max-width: 62ch;   /* 토큰 외 유추값: 문서형 가독 행폭 */
+}
+
+.doc p {
+  color: var(--text);
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+
+.doc .lead { margin-bottom: 22px; }
+
+.doc-h {
+  font-size: 17px;   /* 토큰 외 유추값: 문서 소제목 */
+  margin: 26px 0 8px;
+}
+
+.doc a { color: var(--sky); }
+
+.doc-footnote {
+  margin-top: 30px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  font-size: 13px;
+  color: var(--dim);
+}
+
 /* ── 11. 푸터 ────────────────────────────────────── */
 .footer {
   border-top: 1px solid var(--line);
@@ -408,6 +476,22 @@ h3 {
   font-size: 12.5px;
   color: var(--dim);
 }
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;   /* 토큰 외 유추값 */
+}
+
+.footer-link {
+  font-size: 12.5px;
+  color: var(--dim);
+  text-decoration: none;
+}
+
+.footer-link:hover { color: var(--text); }
 
 /* ── 12. 반응형 (720px 브레이크포인트) ───────────── */
 @media (max-width: 900px) {
@@ -434,6 +518,8 @@ h3 {
   .tz-cards { grid-template-columns: 1fr; }
 
   .spec { grid-template-columns: 1fr; }
+
+  .shots-grid { gap: 8px; }   /* 세로형 썸네일이라 720px 이하에서도 3열 유지 */
 
   .nav a { padding: 8px 9px; font-size: 14px; }
 
