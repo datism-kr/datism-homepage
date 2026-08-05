@@ -31,7 +31,7 @@
 | 파일 | 내용 |
 |---|---|
 | `robots.txt` | 전체 허용 + `_preview/` 차단 + 사이트맵 위치 고지 |
-| `sitemap.xml` | `https://datism.kr/` 1건. 내용을 크게 고치면 `lastmod`를 갱신한다 |
+| `sitemap.xml` | `/`, `/about/`, `/careers/` 3건. 내용을 크게 고치면 `lastmod`를 갱신한다 |
 | `index.html` | `<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">` |
 | `index.html` | 구조화 데이터를 `@graph`로 확장 — Organization · WebSite · VideoGame(탐사대 Z) |
 
