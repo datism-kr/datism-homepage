@@ -117,11 +117,19 @@ a { color: inherit; }
 }
 
 .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: 'Jua', sans-serif;
   font-size: 22px;    /* 토큰 외 유추값: 워드마크(정본 최대 30px 이내) */
   letter-spacing: 0.02em;
   text-decoration: none;
   padding: 4px 2px;
+}
+
+.wordmark-mark {
+  flex: none;
+  display: block;
 }
 
 .nav {
