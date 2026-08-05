@@ -8,14 +8,16 @@
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <!-- 첫 화면이 밤하늘이므로 모바일 브라우저 UI도 거기에 맞춘다(하위 페이지는 크림 유지) -->
 <meta name="theme-color" content="#151C3F">
-<meta property="og:title" content="데이티즘 Datism — 응용 소프트웨어 개발">
-<meta property="og:description" content="Aim Far. Hold Until It Lands. 데이티즘(Datism)은 멀어 보이는 자리를 먼저 골라 제품으로 만듭니다 — 소프트웨어·출판·공간. 서울에 자리한 데이티즘 주식회사이며, 대표 프로덕트는 텍스트 어드벤처 『탐사대 Z』입니다.">
+<!-- 카드(카카오·페북)와 검색 결과는 서로 다른 태그를 본다. og:*는 카드용이라
+     짧게 두고, <title>·description은 검색용이라 설명을 유지한다. -->
+<meta property="og:title" content="데이티즘 Datism">
+<meta property="og:description" content="멀어 보이는 자리를 먼저 고르는 회사. 데이티즘 주식회사 공식 웹사이트입니다.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="Datism">
 <meta property="og:url" content="https://datism.kr/">
 <link rel="canonical" href="https://datism.kr/">
-<meta property="og:image" content="https://datism.kr/assets/og.png">
+<meta property="og:image" content="https://datism.kr/assets/og-night.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -28,7 +30,7 @@
 <!-- 인트로 첫 글자가 이 서체다 — 늦게 오면 A가 다른 글꼴로 한 번 그려진다 -->
 <link rel="preload" href="assets/fonts/SpaceGrotesk-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
-<link rel="stylesheet" href="style.css?v=20260806e">
+<link rel="stylesheet" href="style.css?v=20260806f">
 <!-- 낡은 CSS 대비 최소 바닥. style.css가 어떤 이유로든 옛 판본이면 .intro는 그냥 흐름 속
      블록이 되어 "Analyze / SKIP"이 본문 위에 쏟아진다(실제로 겪은 사고다). 이 두 줄이 있으면
      최악이 "인트로가 안 나온다"에서 멈춘다. 현행 CSS에서는 html.intro-on 쪽이 이겨서 무해하다. -->
@@ -39,7 +41,7 @@
 var f=/[?&](intro|slow)\b/.test(location.search);   /* ?intro=1 · ?slow=8 — 검수용 강제 재생 */
 if((f||!sessionStorage.getItem('dtm-intro'))&&!matchMedia('(prefers-reduced-motion: reduce)').matches)h.className+=' intro-on';
 }catch(e){}})(document);</script>
-<script src="main.js?v=20260806e" defer></script>
+<script src="main.js?v=20260806f" defer></script>
 <!-- 구조화 데이터. alternateName에 "Datism"·"데이티즘"을 모두 넣는 이유는, 검색엔진에
      두 표기가 같은 조직이라는 걸 알려주는 자리가 여기밖에 없기 때문이다(화면 문구로는
      "데이티즘 주식회사 (Datism Co., Ltd.)" 한 줄뿐). 탐사대 Z도 별도 개체로 선언해야
@@ -51,7 +53,7 @@ if((f||!sessionStorage.getItem('dtm-intro'))&&!matchMedia('(prefers-reduced-moti
  "url":"https://datism.kr/","email":"contact@datism.kr","foundingDate":"2024","taxID":"801-87-02979",
  "founder":{"@type":"Person","name":"최유리"},
  "address":{"@type":"PostalAddress","streetAddress":"서초대로73길 40, 815호","addressLocality":"서초구","addressRegion":"서울특별시","addressCountry":"KR"},
- "logo":"https://datism.kr/assets/og.png","image":"https://datism.kr/assets/og.png",
+ "logo":"https://datism.kr/assets/og-night.png","image":"https://datism.kr/assets/og-night.png",
  "sameAs":["https://github.com/datism-kr"],
  "description":"서울에 자리한 응용 소프트웨어 개발 회사. 기획·설계·구현·운영을 한 팀에서 맡아 웹과 모바일 제품을 직접 만든다."},
 {"@type":"WebSite","@id":"https://datism.kr/#site","url":"https://datism.kr/",
