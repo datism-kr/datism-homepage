@@ -787,3 +787,169 @@ h3 {
     transform: translateY(0);
   }
 }
+
+/* ── 15. 인트로 시퀀스 ─────────────────────────────
+   A→Analyze / B→Build / C→Craft / D→Datism 4비트 후 록업으로 수렴하고,
+   그 록업이 상단바 워드마크 자리로 인계되며 사라진다.
+
+   켜지는 조건은 <head>의 인라인 게이트 스크립트가 정한다(첫 페인트부터
+   덮어야 본문이 번쩍이지 않는다). 세션당 1회 + 모션 감소 시 미재생 +
+   JS 미작동 시 미재생 — 셋 중 하나만 어긋나도 이 블록은 매치되지 않는다.
+   본문은 어떤 경우에도 DOM에서 숨기지 않는다(크롤러·스크린리더 보호). ── */
+
+.intro { display: none; }
+
+html.intro-on .intro {
+  display: grid;
+  position: fixed;
+  inset: 0;
+  z-index: 60;                 /* 상단바(10)보다 위 */
+  place-items: center;
+  background: var(--bg);
+  transition: opacity 0.34s ease-out;
+}
+html.intro-on body { overflow: hidden; }
+
+/* 안전망 — main.js가 못 뜨면 오버레이가 영구히 남는다. 6초 뒤 강제 해제.
+   정상 재생은 2.7초에 노드를 제거하므로 이 애니메이션은 발화하지 않는다. */
+html.intro-on .intro { animation: intro-failsafe 1ms 6s forwards; }
+@keyframes intro-failsafe { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+
+.intro-stage {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 0 var(--pad-x);
+}
+
+/* ── 비트 (A/B/C/D + 뒤따르는 글자) ── */
+.intro-beat {
+  grid-area: 1 / 1;
+  display: flex;
+  /* baseline이 아니라 flex-start다 — .intro-rest는 overflow:hidden이라 텍스트 베이스라인이
+     아니라 박스 아래변이 베이스라인으로 합성돼 두 조각이 어긋난다. 같은 줄상자에 맡긴다. */
+  align-items: flex-start;
+  justify-content: center;     /* 단어가 자라면 행이 스스로 재정렬 → 머리글자가 왼쪽으로 미끄러진다 */
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: clamp(56px, 13.5vw, 152px);
+  line-height: 1.28;           /* 1이면 .intro-rest의 overflow:hidden이 y·g 디센더를 자른다 */
+  letter-spacing: -0.045em;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.intro-lead {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* 뒤따르는 글자는 폭 0에서 열린다 — 글리프는 제자리에 있고 가장자리만 지나간다(타이핑 느낌).
+   플렉스 아이템이라 display 지정은 불필요하다(어차피 블록화된다). */
+.intro-rest {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+}
+
+/* 마지막 비트에서 왼쪽으로 밀고 들어오는 마크 */
+.intro-mark {
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+  flex: none;
+  align-self: center;
+  color: var(--text);
+}
+/* 높이 0.98em — 마크 내용이 박스의 74.1%(94.1/127)이므로 실제 그림 높이가 0.726em이 되어
+   SUIT ExtraBold의 캡하이트(0.735em)와 거의 같아진다.
+   top -0.043em — 마크 SVG는 내용이 박스 아래쪽에 치우쳐 있다(위 여백 17.3% · 아래 8.6%).
+   align-self:center는 박스를 맞추므로 그림은 그 차이의 절반만큼 낮게 보인다. 그만큼 올린다.
+   (상단바·푸터 록업은 마크가 작아 이 편차가 2~3px이라 보정하지 않는다 — 셋의 규격을 맞춘다.) */
+.intro-mark svg {
+  display: block;
+  height: 0.98em;
+  width: auto;
+  position: relative;
+  top: -0.043em;
+}
+
+/* ── 최종 록업 ── */
+.intro-final {
+  grid-area: 1 / 1;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+.intro-tag {
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: clamp(19px, 4.2vw, 38px);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.intro-tag span { display: inline-block; opacity: 0; }
+
+/* 푸터 사인오프와 같은 비례(마크 63×46 : 워드마크 41) */
+.intro-lockup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--text);
+  transform-origin: 50% 50%;
+}
+/* margin-left는 시각 중심 보정이다. 마크 SVG는 왼쪽 여백(18%)이 오른쪽(8%)보다 넓어서
+   기하학적으로 가운데 놓으면 록업이 오른쪽으로 8~9px 쏠려 보인다. 왼쪽 여백만큼 당기면
+   행 전체가 그 절반만큼 왼쪽으로 이동해 눈에 보이는 중심이 화면 중심과 맞는다.
+   (푸터 록업은 좌측 정렬이라 이 편차가 드러나지 않는다 — 그래서 거기엔 넣지 않는다.) */
+.intro-lockup svg { display: block; flex: none; width: 4.72em; height: 3.44em; margin-left: -0.846em; }
+.intro-lockup .wordmark-type-lg { height: 3.07em; }
+.intro-lockup { font-size: clamp(14px, 2.7vw, 21px); }   /* em 기준 — 위 세 값이 여기에 물린다 */
+
+/* ── 진행 레일 — 4비트가 남았다는 계약을 조용히 보여준다 ── */
+.intro-rail {
+  position: absolute;
+  left: 50%;
+  bottom: 8vh;
+  transform: translateX(-50%);
+  width: 84px;
+  height: 1px;
+  background: var(--line);
+  overflow: hidden;
+}
+.intro-rail i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--dim);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.42s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+
+.intro-skip {
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  padding: 7px 13px;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  cursor: pointer;
+}
+.intro-skip:hover { color: var(--text); }
+
+@media (max-width: 720px) {
+  .intro-rail { bottom: 12vh; }
+}

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>데이티즘 Datism — 응용 소프트웨어 개발</title>
 <meta name="description" content="먼저 의심하고, 그다음 만들고, 될 때까지 붙잡고 있습니다. 데이티즘(Datism)은 서울에 자리한 응용 소프트웨어 개발 회사입니다. 웹과 모바일에서 바로 실행되는 제품을 직접 만듭니다. 대표 프로덕트는 텍스트 어드벤처 『탐사대 Z』입니다.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <meta name="theme-color" content="#faf7f0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17161c" media="(prefers-color-scheme: dark)">
 <meta property="og:title" content="데이티즘 Datism — 응용 소프트웨어 개발">
@@ -26,12 +27,60 @@
 <link rel="preload" href="assets/fonts/SUIT-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="style.css">
+<!-- 인트로 게이트 — defer 스크립트로는 본문이 한 번 번쩍인 뒤에야 오버레이가 덮인다.
+     그래서 클래스만 여기서 먼저 켠다(로직은 main.js). 세션당 1회 + 모션 감소 시 미재생. -->
+<script>(function(d){var h=d.documentElement;h.className+=' js';try{
+var f=/[?&](intro|slow)\b/.test(location.search);   /* ?intro=1 · ?slow=8 — 검수용 강제 재생 */
+if((f||!sessionStorage.getItem('dtm-intro'))&&!matchMedia('(prefers-reduced-motion: reduce)').matches)h.className+=' intro-on';
+}catch(e){}})(document);</script>
 <script src="main.js" defer></script>
+<!-- 구조화 데이터. alternateName에 "Datism"·"데이티즘"을 모두 넣는 이유는, 검색엔진에
+     두 표기가 같은 조직이라는 걸 알려주는 자리가 여기밖에 없기 때문이다(화면 문구로는
+     "데이티즘 주식회사 (Datism Co., Ltd.)" 한 줄뿐). 탐사대 Z도 별도 개체로 선언해야
+     "탐사대 Z" 질의에서 이 페이지가 그 제품의 공식 출처로 인식된다. -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Organization","name":"데이티즘 주식회사","alternateName":"Datism Co., Ltd.","url":"https://datism.kr/","email":"contact@datism.kr","foundingDate":"2024","taxID":"801-87-02979","founder":{"@type":"Person","name":"최유리"},"address":{"@type":"PostalAddress","streetAddress":"서초대로73길 40, 815호","addressLocality":"서초구","addressRegion":"서울특별시","addressCountry":"KR"},"logo":"https://datism.kr/assets/og.png"}
+{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","@id":"https://datism.kr/#org","name":"데이티즘 주식회사",
+ "alternateName":["Datism","데이티즘","Datism Co., Ltd.","데이티즘㈜"],
+ "url":"https://datism.kr/","email":"contact@datism.kr","foundingDate":"2024","taxID":"801-87-02979",
+ "founder":{"@type":"Person","name":"최유리"},
+ "address":{"@type":"PostalAddress","streetAddress":"서초대로73길 40, 815호","addressLocality":"서초구","addressRegion":"서울특별시","addressCountry":"KR"},
+ "logo":"https://datism.kr/assets/og.png","image":"https://datism.kr/assets/og.png",
+ "sameAs":["https://github.com/datism-kr"],
+ "description":"서울에 자리한 응용 소프트웨어 개발 회사. 기획·설계·구현·운영을 한 팀에서 맡아 웹과 모바일 제품을 직접 만든다."},
+{"@type":"WebSite","@id":"https://datism.kr/#site","url":"https://datism.kr/",
+ "name":"데이티즘 Datism","alternateName":["Datism","데이티즘"],"inLanguage":"ko-KR",
+ "publisher":{"@id":"https://datism.kr/#org"}},
+{"@type":"VideoGame","@id":"https://datism.kr/#tamsadae-z","name":"탐사대 Z","alternateName":"Tamsadae Z",
+ "url":"https://datism.kr/#tamsadae-z","inLanguage":"ko","gamePlatform":"Web","applicationCategory":"GameApplication",
+ "genre":["텍스트 어드벤처","내러티브 어드벤처"],
+ "author":{"@id":"https://datism.kr/#org"},"publisher":{"@id":"https://datism.kr/#org"},
+ "description":"한국 괴담을 소재로 한 텍스트 어드벤처. 스탯과 선택지가 맞물려 이야기가 갈라지고, 같은 사건도 매번 다른 방향으로 끝난다. 개발 중."}
+]}
 </script>
 </head>
 <body>
+
+<!-- ── 인트로 시퀀스 ─────────────────────────────────
+     A→Analyze · B→Build · C→Craft · D→Datism(+마크) → 록업 → 상단바로 인계.
+     본문을 가리기만 할 뿐 숨기지 않는다 — 아래 <main>은 항상 DOM에 그대로 있어
+     크롤러·스크린리더·JS 미작동 환경에서는 이 블록이 아예 존재하지 않는 것과 같다.
+     마크 SVG는 main.js가 상단바에서 복제해 넣는다(거대한 path를 세 번 적지 않기 위해). -->
+<div class="intro" id="intro">
+  <div class="intro-stage" aria-hidden="true">
+    <div class="intro-beat" id="intro-beat">
+      <span class="intro-mark" id="intro-mark"></span><span class="intro-lead" id="intro-lead">A</span><span class="intro-rest" id="intro-rest">nalyze</span>
+    </div>
+    <div class="intro-final" id="intro-final">
+      <p class="intro-tag"><span>Analyze,</span> <span>Build,</span> <span>Craft.</span></p>
+      <div class="intro-lockup" id="intro-lockup">
+        <span class="wordmark-type-lg"></span>
+      </div>
+    </div>
+  </div>
+  <div class="intro-rail" aria-hidden="true"><i id="intro-rail-fill"></i></div>
+  <button type="button" class="intro-skip" id="intro-skip">SKIP</button>
+</div>
 
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 
