@@ -250,8 +250,15 @@ L컷은 푸터 사인오프 전담이다.
 | `#tamsadae-z` | 4.4화면 | 먹빛 | **한 무대에 세 장**(아래 덱 참조) |
 
 ### 티저는 별도 사이트다
-`tamsadae.datism.kr`은 **Cloudflare에 올라간 별도 저장소**(`datism-kr/tamsadae-landing`)다.
-GitHub Pages가 아니므로 이 저장소와 아무 관계가 없다. 첫 화면의 별빛 버튼이 그리로 보낸다.
+`https://tamsadae.datism.kr`은 **Cloudflare에 올라간 별도 저장소**(`datism-kr/tamsadae-landing`)다.
+GitHub Pages가 아니므로 이 저장소와 아무 관계가 없다.
+
+**첫 화면의 버튼은 현재 비활성이다**(`.btn-star.is-off` · 「공개 준비 중」). 연결 자체는
+확인됐지만 아직 공개 단계가 아니라 트래픽을 보내지 않는다. 되살릴 때는 `span`을 `a`로
+바꾸고 위 주소를 넣은 뒤 `is-off`·`role`·`aria-disabled`를 지운다 — CSS는 두 상태만 쓴다.
+
+비활성 표시를 **채운 앰버를 흐리는 방식으로 하지 않는다.** 그러면 "눌리는 버튼인데 안 눌린다"로
+읽힌다. 면을 빼고 외곽선만 남겨 처음부터 버튼이 아닌 것처럼 보이게 한다.
 
 그 사이트는 **`noindex, nofollow` + `robots.txt` 전체 차단**인 비공개 단계다(R1 플레이테스트
 전까지). 따라서 **사이트맵에 넣지 않고, 같은 내용을 datism.kr 쪽에 다시 만들지 않는다** —

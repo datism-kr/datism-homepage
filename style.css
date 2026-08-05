@@ -1398,3 +1398,16 @@ html.bar-dark :focus-visible { outline-color: var(--star); }
   .js .panel { grid-area: 1 / 1; align-self: center; }
   .js .panel + .panel { margin-top: 0; }
 }
+
+/* 비활성 상태 — 아직 공개 단계가 아닌 목적지를 가리킬 때.
+   채운 앰버를 그대로 두고 흐리기만 하면 "눌리는 버튼인데 안 눌린다"로 읽힌다.
+   면을 빼고 외곽선만 남겨 처음부터 버튼이 아닌 것처럼 보이게 한다. */
+.btn-star.is-off {
+  background: none;
+  color: var(--sc-dim);              /* 먹빛 위 5.4:1 */
+  border: 1px solid var(--sc-line);
+  cursor: default;
+  font-size: 13px;
+  padding: 10px 20px;
+}
+.btn-star.is-off:hover { background: none; }
