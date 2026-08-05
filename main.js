@@ -377,7 +377,7 @@ document.documentElement.classList.add('js');
         dx: Math.cos(a) * (36 + (i * 37) % 78),
         dy: Math.sin(a) * (26 + (i * 53) % 62),
         rot: ((i % 7) - 3) * 3.2,
-        lag: (i % 11) / 11 * 0.26                 // 어절마다 조금씩 늦게 도착
+        lag: (i % 11) / 11 * 0.16                 // 어절마다 조금씩 늦게 도착
       });
     });
   })();
@@ -385,14 +385,14 @@ document.documentElement.classList.add('js');
   function drawRedact(p) {
     for (var i = 0; i < redactWords.length; i++) {
       var w = redactWords[i];
-      var gather = easeOutCubic(clamp01((p - w.lag) / 0.42));
+      var gather = easeOutCubic(clamp01((p - w.lag) / 0.34));
       var back = 1 - gather;
       w.el.style.transform = 'translate(' + (w.dx * back).toFixed(2) + 'px,' +
         (w.dy * back).toFixed(2) + 'px) rotate(' + (w.rot * back).toFixed(2) + 'deg)';
       /* 자리를 다 잡은 뒤에야 글자가 나온다 — 겹치면 둘 다 안 읽힌다.
-         어절 i의 모임은 lag+0.42에 끝나고 풀림은 0.56+lag*0.55에 시작하므로, lag가 가장 큰
-         어절(0.236)까지도 모임이 먼저 끝난다. 풀림은 늦어도 p=0.97에 완료된다. */
-      var solve = clamp01((p - 0.56 - w.lag * 0.55) / 0.28);
+         모임은 lag+0.34에 끝나고 풀림은 0.50+lag*0.5에 시작하므로 모든 어절에서 모임이 먼저다.
+         풀림은 늦어도 p=0.78에 끝난다 — 그래야 0.82에 붙잡아 둘 때 문장이 다 읽힌다. */
+      var solve = clamp01((p - 0.50 - w.lag * 0.5) / 0.20);
       w.bar.style.opacity = (1 - solve).toFixed(3);
       w.txt.style.opacity = solve.toFixed(3);
     }
@@ -559,13 +559,20 @@ document.documentElement.classList.add('js');
 
   layoutAim();
 
-  /* 씬 끝은 먹빛으로 잠기고 다음 씬은 그 먹빛에서 밝아진다 — 두 씬의 경계선을 지운다.
-     첫 씬(#top)은 시작 페이드가 없다. 첫 화면이 검게 시작하면 안 되기 때문이다. */
-  function drawVeil(sec, p) {
+  /* 씬 끝은 먹빛으로 잠기고, 다음 씬은 화면으로 올라오는 동안 그 먹빛에서 밝아진다.
+
+     시작 페이드를 p로 계산하면 안 된다. p는 섹션 머리가 화면 위를 지난 뒤에야 0에서
+     오르기 시작하는데, 탭이 내려놓는 자리가 정확히 그 p=0 지점이다 — 그래서 탭할 때마다
+     완전히 검은 화면에 착지했다. 대신 "섹션이 아래에서 얼마나 올라왔는가"로 잰다.
+     화면 높이의 70%만 올라오면 다 걷히므로, 착지 시점에는 항상 말끔하다. */
+  function drawVeil(sec, p, rTop) {
     var v = sec.querySelector(':scope > .scene-stage > .scene-veil');
     if (!v) return;
-    var vIn = sec.classList.contains('scene-night') ? 0 : (1 - clamp01(p / 0.10));
-    var vOut = clamp01((p - 0.80) / 0.20) * 0.96;
+    var vh = window.innerHeight;
+    var entry = clamp01((vh - rTop) / (vh * 0.7));      /* 0 = 화면 아래, 1 = 다 올라옴 */
+    var vIn = sec.classList.contains('scene-night') ? 0 : (1 - entry);
+    /* 끝 페이드는 마지막 12%에서만 — 그전에 시작하면 붙잡아 둔 문장이 가려진다 */
+    var vOut = clamp01((p - 0.88) / 0.12) * 0.96;
     v.style.opacity = Math.max(vIn, vOut).toFixed(3);
   }
 
@@ -584,7 +591,7 @@ document.documentElement.classList.add('js');
       else if (s.id === 'tamsadae-z') drawShots(p);
       else if (s.id === 'branch') drawBranch(p);
       else if (s.id === 'top') drawAim(p);
-      drawVeil(s, p);
+      drawVeil(s, p, r.top);
     }
     syncBar();
   }
@@ -639,6 +646,13 @@ document.documentElement.classList.add('js');
       if (s.tagName !== 'SECTION') continue;
       var top = s.getBoundingClientRect().top + window.scrollY;
       list.push(Math.max(0, Math.round(top - barH)));
+      /* data-hold — 그 씬 안에서 한 번 멈춰야 할 자리(연출이 만들어낸 내용을 읽는 지점).
+         내용이 스크롤로 완성되는 씬만 갖는다: 지워진 기록이 풀린 문장, 갈래가 넘어간 상태. */
+      var hold = parseFloat(s.getAttribute('data-hold'));
+      if (hold > 0) {
+        var span = s.offsetHeight - window.innerHeight;
+        if (span > 40) list.push(Math.round(top + span * hold));
+      }
     }
     var foot = document.querySelector('.footer');
     if (foot) list.push(Math.round(foot.getBoundingClientRect().top + window.scrollY - barH));
