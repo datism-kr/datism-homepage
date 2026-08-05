@@ -1,0 +1,458 @@
+/* ============================================================
+   Datism 회사 홈페이지 — style.css
+   디자인 토큰은 『탐사대 Z』 정본(docs/ui_guidelines/00_principles_tokens.md)에서 가져왔다.
+   토큰에 없는 값은 전부 "토큰 외 유추값" 주석으로 표시했다.
+   질감 문법: 웜 뉴트럴 면 + 파스텔은 소면적에만 + 그림자는 전부 blur 0.
+   ============================================================ */
+
+/* ── 1. 토큰 ─────────────────────────────────────── */
+:root {
+  --bg: #faf7f0;      /* 웜 화이트 바탕 */
+  --card: #ffffff;    /* 카드·버튼 면 */
+  --line: #e9e2d4;    /* 테두리·구분선 */
+  --text: #45413c;    /* 본문 잉크 */
+  --dim: #9b948a;     /* 보조 텍스트 */
+  --coral: #ff8a75;   /* 포인트1 강조 */
+  --sky: #79b8e8;     /* 포인트2 진행/링크 */
+  --lemon: #ffd056;   /* 포인트3 주목 */
+  --mint: #7fd6ae;    /* 포인트4 안전 */
+  --grape: #b39ddb;   /* 포인트5 인물/기록 */
+  --shadow: 0 3px 0 rgba(90, 80, 60, 0.08);
+
+  /* 토큰 외 유추값 — 랜딩 페이지용 레이아웃 상수.
+     게임 정본은 폰 프레임(560px)이지만 여기는 데스크톱 문서형 페이지다. */
+  --container: 1040px;   /* 토큰 외 유추값: 컨테이너 최대폭 */
+  --pad-x: 22px;         /* 정본 #screen 좌우 패딩 22px과 동일 */
+  --sect-y: 76px;        /* 토큰 외 유추값: 섹션 상하 여백(데스크톱) */
+  --sect-y-sm: 48px;     /* 토큰 외 유추값: 섹션 상하 여백(모바일) */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17161c;
+    --card: #201f27;
+    --line: #33313d;
+    --text: #cfcbd6;
+    --dim: #6f6a7a;
+    --shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+    /* 파스텔 5색(coral/sky/lemon/mint/grape)은 다크에서도 그대로 유지 — 정본 §1-2 */
+  }
+}
+
+/* ── 2. 기본 ─────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Gowun Dodum', 'Apple SD Gothic Neo', sans-serif;
+  line-height: 1.8;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3 {
+  font-family: 'Jua', sans-serif;
+  font-weight: 400;
+  line-height: 1.35;   /* 토큰 외 유추값: 헤딩은 본문 1.8보다 좁게 */
+  margin: 0;
+}
+
+p { margin: 0; }
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: inherit; }
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+
+/* 포커스 링 — 스카이 2px */
+:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: 2px;
+  border-radius: 4px;   /* 토큰 외 유추값: 아웃라인 모서리 */
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 8px 14px;
+  z-index: 20;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 12px;
+  top: 12px;
+}
+
+/* ── 3. 상단바 ───────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);   /* 헤어라인 */
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 58px;   /* 토큰 외 유추값: 상단바 높이(터치 타깃 확보) */
+}
+
+.wordmark {
+  font-family: 'Jua', sans-serif;
+  font-size: 22px;    /* 토큰 외 유추값: 워드마크(정본 최대 30px 이내) */
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  padding: 4px 2px;
+}
+
+.nav {
+  display: flex;
+  gap: 6px;
+}
+
+.nav a {
+  display: inline-block;
+  padding: 8px 12px;
+  font-size: 14.5px;
+  color: var(--dim);
+  text-decoration: none;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.nav a:hover {
+  color: var(--text);
+  border-color: var(--line);
+}
+
+/* ── 4. 섹션 골격 ────────────────────────────────── */
+.section,
+.hero {
+  padding: var(--sect-y) 0;
+}
+
+/* 풀폭 밴드 — 카드 면색으로 구간을 나눈다(컬러 면 아님, 뉴트럴) */
+.band {
+  padding: var(--sect-y) 0;
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+/* 스티키 헤더에 가리지 않게 앵커 여백 */
+.band, .section, .hero { scroll-margin-top: 66px; }  /* 토큰 외 유추값 */
+
+.section-kicker,
+.eyebrow {
+  font-family: 'Jua', sans-serif;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: var(--coral);
+  margin: 0 0 8px;
+}
+
+.eyebrow { color: var(--dim); }
+
+h2 {
+  font-size: 28px;   /* 정본 스케일 상한(30px) 이내 */
+  margin: 0 0 14px;
+}
+
+.h2-sub {
+  font-size: 22px;
+  color: var(--dim);
+  margin-bottom: 18px;
+}
+
+h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.lead {
+  color: var(--dim);
+  font-size: 15.5px;
+}
+
+.lead-narrow { max-width: 62ch; }   /* 토큰 외 유추값: 가독 행폭 */
+
+/* ── 5. 히어로 (스플릿) ──────────────────────────── */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 44px;            /* 토큰 외 유추값: 스플릿 간격 */
+  align-items: center;
+}
+
+.hero h1 {
+  font-size: 44px;      /* 토큰 외 유추값: 히어로 헤드라인(정본 최대 30px의 랜딩 확장분) */
+  margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+
+.hero .lead { margin-bottom: 14px; }
+
+.hero-note {
+  font-size: 15px;
+  margin-bottom: 26px;
+}
+
+.hero-note b {
+  font-family: 'Jua', sans-serif;
+  font-weight: 400;
+}
+
+.hero-art {
+  max-width: 360px;   /* 토큰 외 유추값: 세로 2:3 일러스트가 히어로를 삼키지 않도록 상한 */
+  margin-left: auto;
+}
+
+.hero-art picture,
+.hero-art img {
+  width: 100%;
+}
+
+.hero-art img {
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  background: var(--card);
+}
+
+/* ── 6. 토이 버튼 — 주 CTA 1곳 전용 ──────────────── */
+.btn-toy {
+  display: inline-block;
+  font-family: 'Jua', sans-serif;
+  font-size: 15.5px;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--card);
+  padding: 12px 24px;
+  border: 2px solid var(--line);
+  border-bottom-width: 4px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.btn-toy:hover { border-color: var(--coral); }
+
+.btn-toy:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* ── 7. 배지 · 칩 (파스텔은 여기까지만) ──────────── */
+.tz-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.tz-head h2 { margin: 0; }
+
+.badge-dev {
+  display: inline-block;
+  font-family: 'Jua', sans-serif;
+  font-size: 12.5px;
+  line-height: 1.6;   /* 토큰 외 유추값: 필 배지 내부 행간 */
+  color: #fff;        /* 컬러 면 위 글자는 #fff — 정본 §1-3 */
+  background: var(--coral);
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+
+.badge-sm { font-size: 11.5px; padding: 2px 10px; }
+
+.chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 0;
+}
+
+.chip {
+  display: inline-block;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+
+.chip-coral { background: var(--coral); }
+.chip-sky   { background: var(--sky); }
+.chip-mint  { background: var(--mint); }
+
+/* ── 8. 카드 ─────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 20px 22px;
+}
+
+/* 밴드(카드 면색) 위 카드는 바탕과 붙지 않게 바탕색 면으로 뒤집는다 */
+.band .card { background: var(--bg); }
+
+.card p {
+  font-size: 14.5px;
+  color: var(--dim);
+}
+
+.tz-lead {
+  max-width: 68ch;    /* 토큰 외 유추값: 가독 행폭 */
+  font-size: 15.5px;
+}
+
+.tz-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.card-mini { max-width: 460px; }   /* 토큰 외 유추값: 소형 카드 폭(대표작보다 작은 비중) */
+
+.mini-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.mini-head h3 { margin: 0; }
+
+/* ── 9. 스펙 표 (점선 구분) ──────────────────────── */
+.spec {
+  margin: 28px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 32px;   /* 토큰 외 유추값: 2열 표 열 간격 */
+  max-width: 760px;
+}
+
+.spec > div {
+  display: flex;
+  gap: 12px;
+  padding: 9px 2px;
+  border-bottom: 1px dashed var(--line);   /* 표 구분 — 정본 §1-7 */
+}
+
+.spec dt {
+  flex: 0 0 84px;   /* 토큰 외 유추값: 항목명 폭 */
+  font-family: 'Jua', sans-serif;
+  font-size: 13px;
+  color: var(--dim);
+}
+
+.spec dd {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ── 10. 문의 ────────────────────────────────────── */
+.contact-card {
+  margin-top: 18px;
+  max-width: 460px;
+}
+
+.contact-label {
+  font-family: 'Jua', sans-serif;
+  font-size: 13px;
+  color: var(--dim);
+  margin-bottom: 2px;
+}
+
+.contact-placeholder {
+  font-size: 14.5px;
+  color: var(--dim);
+  opacity: 0.75;   /* 토큰 외 유추값: 미입력 자리표시자 감쇠 */
+}
+
+.contact-mail a { color: var(--sky); }
+
+/* ── 11. 푸터 ────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 26px 0 34px;   /* 토큰 외 유추값 */
+}
+
+.footer p {
+  font-size: 12.5px;
+  color: var(--dim);
+}
+
+/* ── 12. 반응형 (720px 브레이크포인트) ───────────── */
+@media (max-width: 900px) {
+  .tz-cards { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 720px) {
+  .section, .hero, .band { padding: var(--sect-y-sm) 0; }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .hero h1 { font-size: 32px; }   /* 토큰 외 유추값: 모바일 히어로 헤드라인 */
+
+  .hero-art {
+    max-width: 380px;   /* 토큰 외 유추값: 세로 일러스트가 화면을 다 먹지 않도록 */
+    margin: 0 auto;
+  }
+
+  h2 { font-size: 24px; }
+
+  .tz-cards { grid-template-columns: 1fr; }
+
+  .spec { grid-template-columns: 1fr; }
+
+  .nav a { padding: 8px 9px; font-size: 14px; }
+
+  .btn-toy { display: block; text-align: center; }
+}
+
+@media (max-width: 380px) {
+  .wordmark { font-size: 20px; }
+  .nav a { padding: 8px 7px; font-size: 13.5px; }
+}
+
+/* ── 13. 모션 감소 ───────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .btn-toy:active { transform: none; }
+}
